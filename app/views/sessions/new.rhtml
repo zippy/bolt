@@ -1,0 +1,23 @@
+<% @page_title = 'Login' %>
+
+<% form_tag('/sessions') do -%>
+  <fieldset>
+    <legend>Login</legend>
+
+    <% unless @login_error.blank? -%>
+      <div class="formError"><%= h(@login_error) %></div>
+    <% end -%>
+
+    <p>
+      <label for="login">Username:</label>
+      <%= text_field_tag(:login) %>
+    </p>
+
+    <p>
+      <label for="password">Password:</label>
+      <%= password_field_tag(:password) %>
+    </p>
+
+    <%= submit_tag('OK') %>
+  </fieldset>
+<% end -%>

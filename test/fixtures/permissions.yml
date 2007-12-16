@@ -1,0 +1,24 @@
+create_blog:
+  id: 1
+  name: create_blog
+  description: Can create blogs
+edit_blog:
+  id: 2
+  name: edit_blog
+  description: Can edit blogs
+post_article:
+  id: 3
+  name: post_article
+  description: Can post blog articles
+edit_article:
+  id: 4
+  name: edit_article
+  description: Can edit blog articles
+admin:
+  id: 5
+  name: admin
+  description: User is the admin user
+delete:
+  id: 6
+  name: delete
+  description: Can delete stuff

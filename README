@@ -1,0 +1,25 @@
+= Bolt
+
+Bolt is yet another authentication/authorization plugin for Ruby on
+Rails, implemented as a Rails Engine.  It is a full service plugin,
+providing models, controllers, and views.
+
+== Status
+
+Bolt is currently in early development.  Work should progress quickly,
+however.  Until it is ready for production, you might want to look at
+the Rauth plugin instead: http://pmade.com/svn/oss/rauth/trunk/
+
+
+== History
+
+Bolt is a derivative of Peter Jones' Rauth plugin for Rails.
+
+
+== Credits
+
+The primary author and maintainer of Bolt is Peter Jones.  Bolt is an
+open source project, and has thus has received help from many
+developers:
+
+* Eric Harris-Braun

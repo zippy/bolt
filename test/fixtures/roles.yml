@@ -1,0 +1,12 @@
+admin:
+  id: 1
+  name: Administrator
+  description: Can do everthing!
+loser:
+  id: 2
+  name: Loser
+  description: You suck
+normal:
+  id: 3
+  name: Average User
+  description: Doing okay
