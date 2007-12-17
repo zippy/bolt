@@ -59,26 +59,41 @@ module Bolt
     cattr_accessor(:record_url)
 
     ################################################################################
-    @@clean_username = true
-    cattr_accessor(:clean_username)
+    # If true, the user_name will always be cleaned before being used.
+    # This is important for most user names, including the situation
+    # where you are using an email address as the user name.  Cleaning
+    # the user name involves stripping leading and trailing white
+    # space, and converting the user name to all lowercase.
+    @@clean_user_name = true
+    cattr_accessor(:clean_user_name)
     
     ################################################################################
+    # The minimum number of characters that a password must have.
     @@min_pass_length = 6
     cattr_accessor(:min_password_length)
     
     ################################################################################
+    # A regular expression that passwords must match.
     @@password_must_match = /./
     cattr_accessor(:password_must_match)
     
     ################################################################################
+    # An error message displayed when the validation regular
+    # expression doesn't match.  The validation regular expression is
+    # configured with the password_must_match option.
     @@password_error_message = 'Please choose a valid password'
     cattr_accessor(:password_error_message)
     
     ################################################################################
+    # Set to true if you want to allow blank passwords.  I have no
+    # idea why you would ever want to do this.  I'm not even sure why
+    # it's an option.  Given that, this option will probably be
+    # removed at some point.
     @@allow_blank_password = false
     cattr_accessor(:allow_blank_password)
     
     ################################################################################
+    # Allow OpenID authentication.  (Not yet implemented)
     @@enable_openid = false
     cattr_accessor(:enable_openid)
 

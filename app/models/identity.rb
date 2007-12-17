@@ -194,9 +194,9 @@ class Identity < ActiveRecord::Base
   private
   
   ################################################################################
-  # Clean the username so configured
-  def clean_username (username)
-    Bolt::Config.clean_username ? username.to_s.strip.downcase : username
+  # Clean the user name if so configured
+  def clean_username (user_name)
+    Bolt::Config.clean_user_name ? user_name.to_s.strip.downcase : user_name
   end
   
 end
