@@ -25,21 +25,6 @@
 class Identity < ActiveRecord::Base
 
   ################################################################################
-  # A way to change the default options
-  cattr_accessor(:rauth_options)
-
-  ################################################################################
-  # Default options:
-  @@rauth_options = {
-    :clean_username   => true,
-    :min_pass_length  => 6,
-    :pass_must_match  => /./,
-    :pass_error_msg   => 'Please choose a valid password',
-    :allow_blank_pass => false,
-    :enable_openid    => false,
-  }
-
-  ################################################################################
   validates_uniqueness_of(:user_name)
 
   ################################################################################
@@ -48,21 +33,17 @@ class Identity < ActiveRecord::Base
   ################################################################################
   # Finder that cleans the user name if necessary
   def self.find_by_user_name (user_name)
-    user_name = user_name.to_s.strip.downcase if self.rauth_options[:clean_username]
-    self.find(:first, :conditions => {:user_name => user_name})
+    self.find(:first, :conditions => {:user_name => clean_username(user_name)})
   end
 
   ################################################################################
   # Locate the account with these credentials
   def self.authenticate (user_name, plain_text_password)
-    options = self.rauth_options
-
-    if options[:enable_openid]
+    if Bolt::Config.enable_openid 
       raise("OpenID support isn't implemented yet, FIXME!")
     end
 
-    user_name = user_name.to_s.strip.downcase if options[:clean_username]
-    account = self.find(:first, :conditions => {:user_name => user_name})
+    account = self.find(:first, :conditions => {:user_name => clean_username(user_name)})
     return account if account and account.password?(plain_text_password)
     nil # return nil when authentication fails
   end
@@ -73,11 +54,9 @@ class Identity < ActiveRecord::Base
   # activation_code will be reset.  Returns nil if no account could be found
   # with the given user_name and code.
   def self.activate (user_name, code)
-    options = self.rauth_options
-    user_name = user_name.to_s.strip.downcase if options[:clean_username]
     code = code.to_s.strip.upcase # redo what require_activation! does
 
-    if account = self.find_by_user_name_and_activation_code(user_name, code)
+    if account = self.find_by_user_name_and_activation_code(clean_username(user_name), code)
       account.enabled = true
       account.activation_code = ''
       return account
@@ -103,11 +82,9 @@ class Identity < ActiveRecord::Base
   # returned account because the password setting might have failed if the
   # password and password confirmation don't match.
   def self.reset_password! (user_name, code, password, confirmation)
-    options = self.rauth_options
-    user_name = user_name.to_s.strip.downcase if options[:clean_username]
     code = code.to_s.strip.upcase
 
-    if account = self.find_by_user_name_and_reset_code(user_name, code)
+    if account = self.find_by_user_name_and_reset_code(clean_username(user_name), code)
       if account.password_with_confirmation(password, confirmation)
         account.reset_code = ''
         account.save
@@ -121,31 +98,32 @@ class Identity < ActiveRecord::Base
   # Check to see if the given plain_text_password matches the encoded
   # password stored in the database.
   def password? (plain_text_password)
-    # don't allow logging in with blank passwords
-    return false if plain_text_password.blank?
-    return false if self.password_hash.blank?
-
+    unless Bolt::Config.allow_blank_password
+      # don't allow logging in with blank passwords
+      return false if plain_text_password.blank?
+      return false if self.password_hash.blank?
+    end
+    
     salt = self.password_salt
     pass = self.password_hash
-    Rauth::Encode.mkpasswd(plain_text_password, salt) == pass
+    Bolt::Encode.mkpasswd(plain_text_password, salt) == pass
   end
 
   ################################################################################
   # Set the encoded password from the given plain text password.
   def password= (plain_text_password)
-    options = self.class.rauth_options
     @password_valid = nil
 
     if plain_text_password.blank? or 
-      plain_text_password.length < options[:min_pass_length] or
-      !plain_text_password.match(options[:pass_must_match])
+      plain_text_password.length < Bolt::Config.min_password_length or
+      !plain_text_password.match(Bolt::Config.password_must_match)
     then
       @password_valid = false
       return
     end
 
-    salt = Rauth::Encode.mksalt
-    pass = Rauth::Encode.mkpasswd(plain_text_password, salt)
+    salt = Bolt::Encode.mksalt
+    pass = Bolt::Encode.mkpasswd(plain_text_password, salt)
     self.password_salt = salt
     self.password_hash = pass
 
@@ -177,7 +155,7 @@ class Identity < ActiveRecord::Base
   # Require that the given account be activated with a code
   def require_activation!
     self.enabled = false
-    self.activation_code = Digest::MD5.hexdigest(self.object_id.to_s + Rauth::Encode.mksalt).upcase
+    self.activation_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt).upcase
   end
   
   ################################################################################
@@ -189,32 +167,37 @@ class Identity < ActiveRecord::Base
   ################################################################################
   # Create a password reset code for this account
   def reset_code!
-    self.reset_code = Digest::MD5.hexdigest(self.object_id.to_s + Rauth::Encode.mksalt).upcase
+    self.reset_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt).upcase
   end
 
   ################################################################################
   # Make sure the user_name column is clean
   def user_name= (name)
-    options = self.class.rauth_options
-    name = name.strip.downcase if options[:clean_username]
-    self[:user_name] = name
+    self[:user_name] = clean_username(name)
   end
 
   ################################################################################
   # Check the password
   validate do |record|
-    options = record.class.rauth_options
-
     if record.instance_variable_get(:@password_valid) == false
-      record.errors.add_to_base(options[:pass_error_msg])
+      record.errors.add_to_base(Bolt::Config.password_error_message)
     elsif record.instance_variable_get(:@current_password) == false
       record.errors.add_to_base("Current password is incorrect")
     elsif record.instance_variable_get(:@password_match) == false
       record.errors.add_to_base("Password and password confirmation don't match")
-    elsif !options[:allow_blank_pass] and record.password_hash.blank?
+    elsif !Bolt::Config.allow_blank_password and record.password_hash.blank?
       record.errors.add_to_base("Password can't be blank")
     end
   end
 
+  ################################################################################
+  private
+  
+  ################################################################################
+  # Clean the username so configured
+  def clean_username (username)
+    Bolt::Config.clean_username ? username.to_s.strip.downcase : username
+  end
+  
 end
 ################################################################################

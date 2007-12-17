@@ -23,28 +23,48 @@
 #
 ################################################################################
 module Bolt
+  
   ################################################################################
-  module State
-
+  # Extensions to the user model to allow for authentication and
+  # authorization.  You can control which of your ActiveRecord models
+  # is considered to be the user model by setting the user_model
+  # option in the Bolt::Config class.
+  module UserModelExt
+    
     ################################################################################
-    # Check to see if a remote web user has been authenticated.
-    def logged_in?
-      !session[:user_id].nil?
+    # This method is called when this module is included into the user model.
+    def self.included (klass)
+      # Do a safety check, make sure the users table has the correct foreign key
+      if klass.table_exists? and !klass.columns.map(&:name).include?('bolt_identity_id')
+        raise "#{klass} is missing the bolt_identity_id column" 
+      end
+
+      # Additional validations that need to be added to the user model
+      klass.validate do |record|
+        # Transfer errors from the Bolt::Identity model to the record
+        if account = record.instance_variable_get(:@bolt_identity)
+          account.errors.full_messages.each {|m| record.errors.add_to_base(m)}
+        end
+      end
+      
+      klass.has_and_belongs_to_many(:roles)
+      klass.has_many(:allowances,  :through => :role)
+      klass.has_many(:permissions, :through => :allowances)
     end
 
     ################################################################################
-    # Get the model object for the logged in user.
-    def current_user
-      model = Bolt::Config.user_model_class
-      @current_user ||= (logged_in? ? model.find(session[:user_id]) : model.new)
+    # Lookup the given permission by name, and if it belongs to this
+    # user through a role, return the matching allowance.  Otherwise,
+    # returns nil.
+    def authorize (permission_name)
+      roles.detect {|r| r.authorize(permission_name)}
     end
 
     ################################################################################
-    # Set the logged in user, or log the current user out (by giving nil).
-    def current_user= (user)
-      session[:user_id] = user ? user.id : nil
-      @current_user = user # to update the @current_user cache
-      reset_session if user.nil?
+    # Returns true if the user has all the given permissions.
+    def can? (*perms)
+      perms.each {|p| return false unless roles.detect {|r| r.can?(p)}}
+      true
     end
 
   end

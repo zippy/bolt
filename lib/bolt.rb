@@ -22,30 +22,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 ################################################################################
-module Bolt
-  ################################################################################
-  module State
-
-    ################################################################################
-    # Check to see if a remote web user has been authenticated.
-    def logged_in?
-      !session[:user_id].nil?
-    end
-
-    ################################################################################
-    # Get the model object for the logged in user.
-    def current_user
-      model = Bolt::Config.user_model_class
-      @current_user ||= (logged_in? ? model.find(session[:user_id]) : model.new)
-    end
-
-    ################################################################################
-    # Set the logged in user, or log the current user out (by giving nil).
-    def current_user= (user)
-      session[:user_id] = user ? user.id : nil
-      @current_user = user # to update the @current_user cache
-      reset_session if user.nil?
-    end
-
-  end
-end
+require 'bolt/config'
+require 'bolt/encode'
+require 'bolt/state'
+require 'bolt/user_model_ext'

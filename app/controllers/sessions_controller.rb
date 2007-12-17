@@ -25,7 +25,7 @@
 class SessionsController < ApplicationController
 
   ################################################################################
-  # Skip the Rauth authenticate filter (if it's in use)
+  # Skip the Bolt authenticate filter (if it's in use)
   skip_before_filter(:authenticate)
 
   ################################################################################
@@ -39,8 +39,7 @@ class SessionsController < ApplicationController
   end
 
   ################################################################################
-  # You must create a form with two fields: login and password.  Place the
-  # template in app/views/sessions/new.rhtml
+  # Display the login form.
   def new
     # If someone is already logged in, skip this step
     login(current_user) and return if logged_in?
@@ -49,24 +48,24 @@ class SessionsController < ApplicationController
   ################################################################################
   # Login.
   def create
-    user_model = self.class.rauth_options[:user_model].constantize
-    backend    = Rauth::Bridge.backend
+    user_model = Bolt::Config.user_model_class
+    backend    = Bolt::Bridge.backend
 
-    if account = backend.authenticate(params[:login], params[:password])
-      if user = user_model.find_by_account_id(account.id)
+    if identity = backend.authenticate(params[:login], params[:password])
+      if user = user_model.find_by_bolt_identity_id(identity.id)
         login(user) and return
-      elsif user_model.respond_to?(:create_from_account)
-        user = user_model.create_from_account(account)
+      elsif user_model.respond_to?(:create_from_bolt_identity)
+        user = user_model.create_from_bolt_identity(identity)
         if user.valid? and !user.new_record?
           login(user) and return
         else
-          raise("#{user_model}.create_from_account did not create a valid model instance")
+          raise("#{user_model}.create_from_bolt_identity did not create a valid model instance")
         end
       else
         message  = "An account for #{params[:login]} was found, "
         message << "but there is no matching #{user_model} record. "
         message << "In addition, the #{user_model} model does not have "
-        message << "a create_from_account class method."
+        message << "a create_from_bolt_identity class method."
         raise(message)
       end
     end
@@ -79,7 +78,7 @@ class SessionsController < ApplicationController
   # Logout.
   def destroy
     self.current_user = nil
-    redirect_to(self.class.rauth_options[:after_logout_url])
+    redirect_to(Bolt::Config.after_logout_url)
   end
 
   ################################################################################
@@ -88,8 +87,8 @@ class SessionsController < ApplicationController
   ################################################################################
   def login (user)
     self.current_user = user
-    redirect_to(session[:rauth_after_login] || self.class.rauth_options[:after_login_url])
-    session[:rauth_after_login] = nil
+    redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
+    session[:bolt_after_login] = nil
     true
   end
 

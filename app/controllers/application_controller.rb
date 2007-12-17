@@ -53,12 +53,11 @@ class ApplicationController < ActionController::Base
   ################################################################################
   # Ensure that the current user is logged in
   def authenticate
-    options = self.rauth_options
     user = self.current_user if self.logged_in?
 
     if !user or (user.respond_to?(:enabled?) and !user.enabled?)
-      session[:rauth_after_login] = request.request_uri if options[:record_url]
-      redirect_to(login_url())
+      session[:bolt_after_login] = request.request_uri if Bolt::Config.record_url 
+      redirect_to(login_url)
       return false # stop the filter chain if called from a filter
     end
 
@@ -108,7 +107,7 @@ class ApplicationController < ActionController::Base
         allowance = nil if check_allowance(user, allowance) == false
       end
 
-      return rauth_failed_authorization if allowance.nil?
+      return bolt_failed_authorization if allowance.nil?
     end
 
     true
@@ -116,7 +115,7 @@ class ApplicationController < ActionController::Base
 
   ################################################################################
   # Helper method called when authorization fails
-  def rauth_failed_authorization
+  def bolt_failed_authorization
     unauthorized if respond_to?(:unauthorized)
 
     if !performed?
