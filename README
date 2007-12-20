@@ -58,6 +58,11 @@ to belong to many roles.  This is more in-line with the Unix group
 philosophy.
 
 
+== Converting from Rauth
+
+A conversion script is in the works.  Stay tuned.
+
+
 == Credits
 
 The primary author and maintainer of Bolt is Peter Jones.  Bolt is an
