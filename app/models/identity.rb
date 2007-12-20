@@ -181,10 +181,23 @@ class Identity < ActiveRecord::Base
   # do this, the password for this identity is allowed to be blank.
   # Users will then be prompted for a password when activating their
   # account.
-  def require_activation!
+  #
+  # If you want to send out an activation notice email, pass the URL
+  # to the activations controller.  You can use the route helper (if
+  # inside a controller or view):
+  #
+  #  activation_url(code)
+  def require_activation! (activation_url=nil)
     self.enabled = false
     self.activation_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt)
     self.activation_code = self.class.standardize_code(self.activation_code)
+    
+    if activation_url
+      # send out an email if so requested
+      BoltNotifications.deliver_activation_notice(user_model_object, self, activation_url)
+    end
+    
+    self.activation_code
   end
   
   ################################################################################

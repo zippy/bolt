@@ -50,6 +50,11 @@ module Bolt
       klass.has_and_belongs_to_many(:roles)
       klass.has_many(:allowances,  :through => :role)
       klass.has_many(:permissions, :through => :allowances)
+      
+      # only add the following methods if they don't exist
+      unless klass.instance_methods.include?('name_with_email')
+        klass.send(:include, Bolt::UserModelExt::NameWithEmail)
+      end
     end
 
     ################################################################################
@@ -88,7 +93,9 @@ module Bolt
     #
     # If you request activation, you can leave the password blank.
     # Users will be prompted for a password when they activate their
-    # account.
+    # account.  If you pass a string as the value for the activation
+    # option, the string should be a URL.  In which case, an email
+    # will be sent to the user with his activation code.
     def create_bolt_identity (options={}, &block)
       config = {
         :user_name    => :email,
@@ -113,9 +120,12 @@ module Bolt
       # record the account for later error reporting
       @bolt_identity = identity
 
+      activation_url = config[:activation] if config[:activation].is_a?(String)
+      require_activation = config[:activation]
+      
       begin
         ActiveRecord::Base.transaction do
-          identity.require_activation! if config[:activation]
+          identity.require_activation!(activation_url) if require_activation
           identity.save!
           self.bolt_identity_id = identity.id
           save!
@@ -133,6 +143,24 @@ module Bolt
     # Returns the Bolt identity object that is associated with this user record.
     def bolt_identity
       @bolt_identity ||= Bolt::Config.backend_class.find(bolt_identity_id)
+    end
+
+    ################################################################################
+    # Only added if it doesn't already exist
+    module NameWithEmail
+      ################################################################################
+      # Returns a name and email address, like so:
+      #
+      #  Peter Jones <pjones@pmade.com>
+      def name_with_email
+        result   = name if respond_to?(:name)
+        result ||= first_name + ' ' + last_name if respond_to?(:first_name) and respond_to?(:last_name)
+        result ||= ''
+        result << "<#{email}>" if respond_to?(:email)
+        result << "<#{email_address}>" if respond_to?(:email_address)
+        raise("your user model needs to have an email (or email_address) attribute") if result.blank?
+        result
+      end
     end
     
   end

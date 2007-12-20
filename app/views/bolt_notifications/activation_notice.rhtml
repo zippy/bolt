@@ -1,0 +1,11 @@
+<%= @user.first_name %>,
+
+In order to activate your <%= Bolt::Config.application_name %> account, please click the link below:
+
+  <%= @url %>
+  
+You can also use the following activation code if your web browser is still on the activation page:
+  
+  <%= @identity.activation_code %>
+  
+Thank you for using <%= Bolt::Config.application_name %>.

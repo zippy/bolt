@@ -36,6 +36,16 @@ module Bolt
   class Config
     
     ################################################################################
+    # The public name of your Rails application
+    @@application_name = 'Your Rails App'
+    cattr_accessor(:application_name)
+    
+    ################################################################################
+    # The email address to use as the sender address when Bolt sends out emails.
+    @@email_from = 'noreply@example.com'
+    cattr_accessor(:email_from)
+    
+    ################################################################################
     # The class of your ActiveRecord model used to hold information about users.
     @@user_model = :user
     cattr_accessor(:user_model)

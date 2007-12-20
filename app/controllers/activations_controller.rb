@@ -95,8 +95,18 @@ class ActivationsController < ApplicationController
   # out an activation email.
   def deliver
     unless params[:login].blank?
-      # FIXME
-      redirect_to(:action => 'new', :login => params[:login])
+      account = @backend.find_by_user_name(params[:login])
+      
+      if account.nil?
+        @deliver_error = "Account not found."
+      elsif !account.require_activation?
+        @deliver_error = "Account already activated."
+      else
+        user = account.user_model_object
+        url  = activation_url(account.activation_code)
+        BoltNotifications.deliver_activation_notice(user, account, url)
+        redirect_to(:action => 'new', :login => params[:login])
+      end
     end
   end
   

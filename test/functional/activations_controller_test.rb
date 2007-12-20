@@ -80,6 +80,13 @@ class ActivationsControllerTest < Test::Unit::TestCase
   end
   
   ################################################################################
+  def test_delivery
+    create_user_and_identity
+    post(:deliver, :login => @user.email)
+    assert_response(:redirect)
+  end
+  
+  ################################################################################
   private
   
   ################################################################################
