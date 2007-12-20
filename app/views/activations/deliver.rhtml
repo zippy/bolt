@@ -1,0 +1,26 @@
+<% @page_title = 'Get Activation Code' %>
+
+<% form_tag(deliver_activations_path) do -%>
+  <fieldset>
+    <legend>Recover Activation Code</legend>
+
+    <% unless @activation_error.blank? -%>
+      <div class="formError">
+        <p><%= h(@activation_error) %></p>
+        <p>If you have already activated your account, you can <%= link_to('log in', login_path) %>.</p>
+      </div>
+    <% end -%>
+    
+    <p>
+      Please enter the <%= h(Bolt::Config.user_name_label.downcase) %> for your account.  
+      When you click on the "Recover" button below, an email will be sent to you.
+    </p>
+    
+    <p>
+      <label for="login"><%= h(Bolt::Config.user_name_label) %>:</label>
+      <%= text_field_tag(:login, params[:login]) %>
+    </p>
+    
+    <%= submit_tag('Recover') %>
+  </fieldset>
+<% end -%>

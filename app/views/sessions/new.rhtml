@@ -9,7 +9,7 @@
     <% end -%>
 
     <p>
-      <label for="login">Username:</label>
+      <label for="login"><%= h(Bolt::Config.user_name_label) %>:</label>
       <%= text_field_tag(:login) %>
     </p>
 

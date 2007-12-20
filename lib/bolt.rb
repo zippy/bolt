@@ -26,6 +26,7 @@ require 'bolt/config'
 require 'bolt/encode'
 require 'bolt/state'
 require 'bolt/user_model_ext'
+require 'bolt/bolt_controller_methods'
 
 ################################################################################
 # Extend the User model

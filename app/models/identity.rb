@@ -54,9 +54,7 @@ class Identity < ActiveRecord::Base
   # activation_code will be reset.  Returns nil if no account could be found
   # with the given user_name and code.
   def self.activate (user_name, code)
-    code = code.to_s.strip.upcase # redo what require_activation! does
-
-    if account = self.find_by_user_name_and_activation_code(clean_username(user_name), code)
+    if account = self.find_by_user_name_and_activation_code(clean_username(user_name), standardize_code(code))
       account.enabled = true
       account.activation_code = ''
       return account
@@ -73,6 +71,13 @@ class Identity < ActiveRecord::Base
   end
 
   ################################################################################
+  # Check to see if the given activation code requires a password to be set
+  def self.activation_requires_password? (code)
+    account = self.find_by_activation_code(standardize_code(code))
+    account ? account.password_hash.blank? : true
+  end
+  
+  ################################################################################
   # Locate an account based on the user_name and a reset code.  If that
   # account can be found, reset the password with the given password and
   # confirmation.
@@ -82,9 +87,7 @@ class Identity < ActiveRecord::Base
   # returned account because the password setting might have failed if the
   # password and password confirmation don't match.
   def self.reset_password! (user_name, code, password, confirmation)
-    code = code.to_s.strip.upcase
-
-    if account = self.find_by_user_name_and_reset_code(clean_username(user_name), code)
+    if account = self.find_by_user_name_and_reset_code(clean_username(user_name), standardize_code(code))
       if account.password_with_confirmation(password, confirmation)
         account.reset_code = ''
         account.save
@@ -95,14 +98,36 @@ class Identity < ActiveRecord::Base
   end
 
   ################################################################################
+  # Returns the user model object that corresponds to this identity
+  # record.  If there isn't a matching user model record, attempt to
+  # create it.  All errors raise an exception.
+  def user_model_object
+    user_model = Bolt::Config.user_model_class
+
+    # simplest case, existing user model record
+    user = user_model.find_by_bolt_identity_id(id)
+    return user if user
+    
+    if user_model.respond_to?(:create_from_bolt_identity)
+      user = user_model.create_from_bolt_identity(self)
+      return user if user.valid? and !user.new_record?
+      raise("#{user_model}.create_from_bolt_identity did not create a valid model instance")
+    else
+      message  = "An account for #{user_name} was found, "
+      message << "but there is no matching #{user_model} record. "
+      message << "In addition, the #{user_model} model does not have "
+      message << "a create_from_bolt_identity class method."
+      raise(message)
+    end
+  end
+  
+  ################################################################################
   # Check to see if the given plain_text_password matches the encoded
   # password stored in the database.
   def password? (plain_text_password)
-    unless Bolt::Config.allow_blank_password
-      # don't allow logging in with blank passwords
-      return false if plain_text_password.blank?
-      return false if self.password_hash.blank?
-    end
+    # don't allow logging in with blank passwords
+    return false if plain_text_password.blank?
+    return false if self.password_hash.blank?
     
     salt = self.password_salt
     pass = self.password_hash
@@ -152,10 +177,14 @@ class Identity < ActiveRecord::Base
   end
 
   ################################################################################
-  # Require that the given account be activated with a code
+  # Require that the given account be activated with a code.  If you
+  # do this, the password for this identity is allowed to be blank.
+  # Users will then be prompted for a password when activating their
+  # account.
   def require_activation!
     self.enabled = false
-    self.activation_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt).upcase
+    self.activation_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt)
+    self.activation_code = self.class.standardize_code(self.activation_code)
   end
   
   ################################################################################
@@ -167,7 +196,8 @@ class Identity < ActiveRecord::Base
   ################################################################################
   # Create a password reset code for this account
   def reset_code!
-    self.reset_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt).upcase
+    self.reset_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt)
+    self.reset_code = self.class.standardize_code(self.reset_code)
   end
 
   ################################################################################
@@ -185,7 +215,7 @@ class Identity < ActiveRecord::Base
       record.errors.add_to_base("Current password is incorrect")
     elsif record.instance_variable_get(:@password_match) == false
       record.errors.add_to_base("Password and password confirmation don't match")
-    elsif !Bolt::Config.allow_blank_password and record.password_hash.blank?
+    elsif record.password_hash.blank? and record.activation_code.blank?
       record.errors.add_to_base("Password can't be blank")
     end
   end
@@ -197,6 +227,12 @@ class Identity < ActiveRecord::Base
   # Clean the user name if so configured
   def self.clean_username (user_name)
     Bolt::Config.clean_user_name ? user_name.to_s.strip.downcase : user_name
+  end
+
+  ################################################################################
+  # Standardize the MD5 codes such as the activation and reset password codes.
+  def self.standardize_code (code)
+     code.to_s.strip.upcase
   end
   
 end

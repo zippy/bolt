@@ -79,11 +79,16 @@ module Bolt
     #
     # If a block is given, it will be called after an identity has
     # been created and successfully saved.  It is passed the new
-    # identity.  Returns false if there are any problems creating the
+    # identity.  
     #
-    # identity account.  If the identity account was successfully
-    # created, the activation code will be returned if activation was
-    # requested, otherwise true is returned.
+    # Returns false if there are any problems creating the identity
+    # account.  If the identity account was successfully created, the
+    # activation code will be returned if activation was requested,
+    # otherwise true is returned.
+    #
+    # If you request activation, you can leave the password blank.
+    # Users will be prompted for a password when they activate their
+    # account.
     def create_bolt_identity (options={}, &block)
       config = {
         :user_name    => :email,
@@ -122,6 +127,12 @@ module Bolt
       end
 
       return config[:activation] ? identity.activation_code : true
+    end
+    
+    ################################################################################
+    # Returns the Bolt identity object that is associated with this user record.
+    def bolt_identity
+      @bolt_identity ||= Bolt::Config.backend_class.find(bolt_identity_id)
     end
     
   end

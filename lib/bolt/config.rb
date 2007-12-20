@@ -85,14 +85,6 @@ module Bolt
     cattr_accessor(:password_error_message)
     
     ################################################################################
-    # Set to true if you want to allow blank passwords.  I have no
-    # idea why you would ever want to do this.  I'm not even sure why
-    # it's an option.  Given that, this option will probably be
-    # removed at some point.
-    @@allow_blank_password = false
-    cattr_accessor(:allow_blank_password)
-    
-    ################################################################################
     # Allow OpenID authentication.  (Not yet implemented)
     @@enable_openid = false
     cattr_accessor(:enable_openid)
@@ -101,6 +93,11 @@ module Bolt
     # The authentication back-end class to use.
     @@backend = :identity
     cattr_accessor(:backend)
+
+    ################################################################################
+    # What to call the user name in forms (such as the login form)
+    @@user_name_label = 'Email Address'
+    cattr_accessor(:user_name_label)
     
     ################################################################################
     # Returns the class of the user model.  You configure the user

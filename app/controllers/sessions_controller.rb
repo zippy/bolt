@@ -46,28 +46,12 @@ class SessionsController < ApplicationController
   end
 
   ################################################################################
-  # Login.
+  # Log the user in, redirecting to the correct page.
   def create
-    user_model = Bolt::Config.user_model_class
-    backend    = Bolt::Config.backend_class
+    backend = Bolt::Config.backend_class
 
     if identity = backend.authenticate(params[:login], params[:password])
-      if user = user_model.find_by_bolt_identity_id(identity.id)
-        login(user) and return
-      elsif user_model.respond_to?(:create_from_bolt_identity)
-        user = user_model.create_from_bolt_identity(identity)
-        if user.valid? and !user.new_record?
-          login(user) and return
-        else
-          raise("#{user_model}.create_from_bolt_identity did not create a valid model instance")
-        end
-      else
-        message  = "An account for #{params[:login]} was found, "
-        message << "but there is no matching #{user_model} record. "
-        message << "In addition, the #{user_model} model does not have "
-        message << "a create_from_bolt_identity class method."
-        raise(message)
-      end
+      login(identity.user_model_object) and return
     end
 
     @login_error = "The credentials you entered are incorrect, please try again."
@@ -75,7 +59,7 @@ class SessionsController < ApplicationController
   end
 
   ################################################################################
-  # Logout.
+  # Log the user out, and go to Bolt::Config.after_logout_url.
   def destroy
     self.current_user = nil
     redirect_to(Bolt::Config.after_logout_url)
@@ -85,11 +69,10 @@ class SessionsController < ApplicationController
   private
 
   ################################################################################
-  def login (user)
-    self.current_user = user
-    redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
-    session[:bolt_after_login] = nil
-    true
-  end
-
+  include(Bolt::BoltControllerMethods)
+  
+  ################################################################################
+  # Rails 2.0 CSRF Security
+  csrf_attack_prevention(:only => :create)
+  
 end

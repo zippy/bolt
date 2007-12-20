@@ -1,0 +1,39 @@
+<% @page_title = 'Account Activation' %>
+
+<% form_tag({:controller => 'activations', :action => 'update'}, {:method => 'put'}) do -%>
+  <fieldset>
+    <legend>Account Activation</legend>
+
+    <% unless @activation_error.blank? -%>
+      <div class="formError">
+        <p><%= h(@activation_error) %></p>
+        <p>If you have already activated your account, you can <%= link_to('log in', login_path) %>.</p>
+        <p>To have your activation email resent, <%= link_to('click here', deliver_activations_path) %>.</p>
+      </div>
+    <% end -%>
+    
+    <p>
+      <label for="id">Activation Code:</label>
+      <%= text_field_tag(:id, params[:id]) %>
+    </p>
+    
+    <p>
+      <label for="login"><%= h(Bolt::Config.user_name_label) %>:</label>
+      <%= text_field_tag(:login, params[:login]) %>
+    </p>
+    
+    <% if @requires_password %>
+      <p>
+        <label for="password">Choose a Password:</label>
+        <%= password_field_tag(:password) %>
+      </p>
+      
+      <p>
+        <label for="confirmation">Password Confirmation:</label>
+        <%= password_field_tag(:confirmation) %>
+      </p>
+    <% end %>
+
+    <%= submit_tag('Activate') %>
+  </fieldset>
+<% end -%>

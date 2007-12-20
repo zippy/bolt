@@ -43,6 +43,21 @@ password = loop do
   say("Password Mismatch, Try Again")
 end
 
-unless Rauth::Bridge.create_account(user, :user_name => user.email, :password => password)
-  raise "Account NOT created: #{user.errors.full_messages}"
+# The following line will create a Bolt identity for the user.  The
+# user name for the identity will be the user's email address by
+# default (acquired by calling the email method).
+#
+# You can request that the user have to active his account with an
+# activation code.  In which case you don't have to give a password,
+# the user will be prompted for one while activating.
+unless user.create_bolt_identity(:password => password)
+  $stderr.puts("account NOT created: #{user.errors.full_messages}")
+  exit(1)
 end
+
+# example creating an identity without a password, that requires
+# activation:
+#
+#  activation_code = user.create_bolt_identity(:activation => true)
+#
+# More documentation in Bolt::UserModelExt in lib/bolt/user_model_ext.rb
