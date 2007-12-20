@@ -18,8 +18,8 @@ class IdentityTest < Test::Unit::TestCase
   ################################################################################
   # Make sure the authentication system works
   def test_authenticate
-    assert_equal(identities(:pjones), Identity.authenticate('pjones', 'foobar'))
-    assert_nil(Identity.authenticate('pjones', 'barfoo'))
+    assert_equal(identities(:pjones), Identity.authenticate('pjones@pmade.com', 'foobar'))
+    assert_nil(Identity.authenticate('pjones@pmade.com', 'barfoo'))
   end
 
   ################################################################################
@@ -28,9 +28,9 @@ class IdentityTest < Test::Unit::TestCase
     pjones = identities(:pjones)
 
     [
-      'PJONES', 
-      ' pjones ',
-      ' Pjones',
+      'PJONES@pmade.com', 
+      ' pjones@pmade.com ',
+      ' Pjones@pmade.com',
     ].each {|u| assert_equal(pjones, Identity.authenticate(u, 'foobar'))}
   end
 

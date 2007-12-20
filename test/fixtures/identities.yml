@@ -1,6 +1,6 @@
 pjones:
   id: 1
-  user_name: pjones
+  user_name: pjones@pmade.com
   enabled: true
   password_hash: <%= Bolt::Encode.mkpasswd('foobar', @salt=Bolt::Encode.mksalt) %>
   password_salt: <%= @salt %>

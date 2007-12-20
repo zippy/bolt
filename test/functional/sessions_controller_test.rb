@@ -1,6 +1,6 @@
 ################################################################################
 require File.dirname(__FILE__) + '/../test_helper'
-require 'rauth/sessions_controller'
+require 'sessions_controller'
 
 ################################################################################
 # Re-raise errors caught by the controller.
@@ -8,6 +8,9 @@ class SessionsController; def rescue_action(e) raise e end; end
 
 ################################################################################
 class SessionsControllerTest < Test::Unit::TestCase
+  ################################################################################
+  self.fixture_path = File.join(File.dirname(__FILE__), '..', 'fixtures')
+  fixtures(:identities, :users)
 
   ################################################################################
   def setup
@@ -18,9 +21,17 @@ class SessionsControllerTest < Test::Unit::TestCase
 
   ################################################################################
   def test_failed_login
-    post(:create, :username => 'foo', :password => 'foo')
+    post(:create, :login => 'foo', :password => 'foo')
     assert_response(:success) # make sure we weren't redirected
     assert_nil(session[:user_id])
   end
 
+  ################################################################################
+  def test_successful_login
+    pjones = users(:pjones)
+    post(:create, :login => pjones.email, :password => 'foobar')
+    assert_response(:redirect)
+    assert_not_nil(session[:user_id])
+  end
+  
 end

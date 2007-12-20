@@ -49,7 +49,7 @@ class SessionsController < ApplicationController
   # Login.
   def create
     user_model = Bolt::Config.user_model_class
-    backend    = Bolt::Bridge.backend
+    backend    = Bolt::Config.backend_class
 
     if identity = backend.authenticate(params[:login], params[:password])
       if user = user_model.find_by_bolt_identity_id(identity.id)

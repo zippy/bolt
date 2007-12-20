@@ -1,4 +1,13 @@
-one:
+pjones:
   id: 1
-two:
+  first_name: Peter
+  last_name: Jones
+  email: pjones@pmade.com
+  bolt_identity_id: 1
+
+foobar:
   id: 2
+  first_name: Foo
+  last_name: Bar
+  email: foobar@example.com
+  bolt_identity_id: 2
