@@ -2,5 +2,5 @@ pjones:
   id: 1
   user_name: pjones
   enabled: true
-  password_hash: <%= Rauth::Encode.mkpasswd('foobar', @salt=Rauth::Encode.mksalt) %>
+  password_hash: <%= Bolt::Encode.mkpasswd('foobar', @salt=Bolt::Encode.mksalt) %>
   password_salt: <%= @salt %>

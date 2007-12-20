@@ -173,7 +173,7 @@ class Identity < ActiveRecord::Base
   ################################################################################
   # Make sure the user_name column is clean
   def user_name= (name)
-    self[:user_name] = clean_username(name)
+    self[:user_name] = self.class.clean_username(name)
   end
 
   ################################################################################
@@ -195,7 +195,7 @@ class Identity < ActiveRecord::Base
   
   ################################################################################
   # Clean the user name if so configured
-  def clean_username (user_name)
+  def self.clean_username (user_name)
     Bolt::Config.clean_user_name ? user_name.to_s.strip.downcase : user_name
   end
   

@@ -69,7 +69,7 @@ module Bolt
     
     ################################################################################
     # The minimum number of characters that a password must have.
-    @@min_pass_length = 6
+    @@min_password_length = 6
     cattr_accessor(:min_password_length)
     
     ################################################################################
@@ -96,12 +96,31 @@ module Bolt
     # Allow OpenID authentication.  (Not yet implemented)
     @@enable_openid = false
     cattr_accessor(:enable_openid)
-
+    
+    ################################################################################
+    # The authentication back-end class to use.
+    @@backend = :identity
+    cattr_accessor(:backend)
+    
     ################################################################################
     # Returns the class of the user model.  You configure the user
     # model using Bolt::Config.user_model, not this method.
     def self.user_model_class
-      user_model.to_s.constantize
+      load_class_for(user_model)
+    end
+    
+    ################################################################################
+    # Returns the class of the back-end authentication interface
+    def self.backend_class
+      load_class_for(backend)
+    end
+    
+    ################################################################################
+    private
+    
+    ################################################################################
+    def self.load_class_for (item)
+      item.to_s.camelize.constantize
     end
     
   end

@@ -67,5 +67,62 @@ module Bolt
       true
     end
 
+    ################################################################################
+    # Create an identity account to match this user account.  The
+    # options hash controls how the identity account is created:
+    # 
+    # +user_name+: The method to call on the user model to get the user name, defaults to :email
+    # +openid_url+: Can be used instead of a user_name if using OpenID
+    # +password+: The plain text password for this identity
+    # +confirmation+: An optional password confirmation, will be tested against the password
+    # +activation+: Create the identity, but require activation before it can be used
+    #
+    # If a block is given, it will be called after an identity has
+    # been created and successfully saved.  It is passed the new
+    # identity.  Returns false if there are any problems creating the
+    #
+    # identity account.  If the identity account was successfully
+    # created, the activation code will be returned if activation was
+    # requested, otherwise true is returned.
+    def create_bolt_identity (options={}, &block)
+      config = {
+        :user_name    => :email,
+        :openid_url   => nil,
+        :password     => :pill,
+        :confirmation => :pill,
+        :activation   => false,
+      }.update(options)
+
+      # create the back-end identity account
+      backend = Bolt::Config.backend_class
+      user_name = send(config[:user_name]) if config[:user_name]
+      identity = backend.new(:user_name  => user_name, :openid_url => config[:openid_url])
+
+      # check to see if we need to set the password for this identity
+      if config[:password] != :pill and config[:confirmation] != :pill
+        identity.password_with_confirmation(config[:password], config[:confirmation])
+      elsif config[:password] != :pill
+        identity.password = config[:password]
+      end
+
+      # record the account for later error reporting
+      @bolt_identity = identity
+
+      begin
+        ActiveRecord::Base.transaction do
+          identity.require_activation! if config[:activation]
+          identity.save!
+          self.bolt_identity_id = identity.id
+          save!
+          yield(identity) if block_given?
+        end
+      rescue
+        valid? # force the transfer of error messages
+        return false
+      end
+
+      return config[:activation] ? identity.activation_code : true
+    end
+    
   end
 end

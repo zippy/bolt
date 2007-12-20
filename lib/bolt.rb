@@ -26,3 +26,13 @@ require 'bolt/config'
 require 'bolt/encode'
 require 'bolt/state'
 require 'bolt/user_model_ext'
+
+################################################################################
+# Extend the User model
+require_dependency(Bolt::Config.user_model.to_s)
+Bolt::Config.user_model_class.send(:include, Bolt::UserModelExt)
+
+################################################################################
+# Extend controllers and views so they have access to login state
+ActionController::Base.send(:include, Bolt::State)
+ActionView::Base.send(:include, Bolt::State)

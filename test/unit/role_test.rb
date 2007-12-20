@@ -1,8 +1,5 @@
 ################################################################################
 require File.dirname(__FILE__) + '/../test_helper'
-require('rauth/role')
-require('rauth/permission')
-require('rauth/allowance')
 
 ################################################################################
 class RoleTest < Test::Unit::TestCase
@@ -45,6 +42,7 @@ class RoleTest < Test::Unit::TestCase
     assert_equal(5, loser.authorize(:post_article).allowance)
     assert(loser.can?(:post_article))
 
+    # return loser for other tests to use
     loser
   end
 
