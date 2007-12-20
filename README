@@ -29,7 +29,8 @@ these steps:
 1. Create migrations: script/generate plugin_migration
 2. Migrate your database: rake db:migrate
 3. Place this line in your routes file: map.from_plugin(:bolt)
-4. Read the Bolt configuration
+4. Add a bolt_identity_id column to your user model
+5. Read the Bolt configuration
 
 
 == Authenticating With an External Source
