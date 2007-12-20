@@ -4,6 +4,12 @@ Bolt is yet another authentication/authorization plugin for Ruby on
 Rails, implemented as a Rails Engine.  It is a full service plugin,
 providing models, controllers, and views.
 
+Authentication and Authorization are both provided by the plugin.
+There is also support for working with any loaded class for
+authentication, making it easy to authenticate with an external source
+such as LDAP.
+
+
 == Status
 
 Bolt is currently in early development.  Work should progress quickly,
@@ -11,9 +17,45 @@ however.  Until it is ready for production, you might want to look at
 the Rauth plugin instead: http://pmade.com/svn/oss/rauth/trunk/
 
 
+== Installation
+
+Rails Engines needs to be installed into your Rails application.  You
+can find out more about Rails Engines here: http://rails-engines.org/
+
+Once you have Rails Engines installed, place Bolt into your
+vendor/plugins directory as you would any other plugin.  Then follow
+these steps:
+
+1. Create migrations: script/generate plugin_migration
+2. Migrate your database: rake db:migrate
+3. Place this line in your routes file: map.from_plugin(:bolt)
+4. Read the Bolt configuration
+
+
+== Authenticating With an External Source
+
+1. Write a class that looks like the Identity class
+2. Set Bolt::Config.backend
+
+
 == History
 
 Bolt is a derivative of Peter Jones' Rauth plugin for Rails.
+
+
+== Rauth Comparison
+
+Since Bolt is derived from Rauth, it might be useful to compare the
+two.  The biggest difference is that Bolt is a Rails Engine, whereas
+Rauth is a traditional Rails plugin.
+
+Bolt is also greatly simplified.  The bridge and account creator code
+has been removed, and all configuration options have been moved to a
+single class (Bolt::Config).
+
+Rauth limited you to one role per person.  Bolt allows a single user
+to belong to many roles.  This is more in-line with the Unix group
+philosophy.
 
 
 == Credits
