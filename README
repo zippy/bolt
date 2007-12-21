@@ -30,7 +30,12 @@ these steps:
 2. Migrate your database: rake db:migrate
 3. Place this line in your routes file: map.from_plugin(:bolt)
 4. Add a bolt_identity_id column to your user model
-5. Read the Bolt configuration
+5. Add a call to Bolt::Initializer at the bottom of your environment.rb
+
+ Bolt::Initializer.run do |bolt|
+   bolt.application_name = 'My Fancy Rails Application'
+   bolt.email_from = 'Account Team <me@example.com>'
+ end
 
 
 == Authenticating With an External Source

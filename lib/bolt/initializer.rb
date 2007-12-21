@@ -22,14 +22,28 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 ################################################################################
-require 'bolt/config'
-require 'bolt/initializer'
-require 'bolt/encode'
-require 'bolt/state'
-require 'bolt/user_model_ext'
-require 'bolt/bolt_controller_methods'
-
-################################################################################
-# Extend controllers and views so they have access to login state
-ActionController::Base.send(:include, Bolt::State)
-ActionView::Base.send(:include, Bolt::State)
+module Bolt
+  
+  ################################################################################
+  module Initializer
+    
+    ################################################################################
+    # Configure Bolt, and then allow it to instrument your Rails
+    # application based on the settings.  If you give this method a
+    # block, it will be yielded the Bolt::Config class for you to use:
+    #
+    #  Bolt::Initializer do |bolt|
+    #    bolt.application_name = 'My Fancy Rails App'
+    #  end
+    def self.run (&block)
+      # Give the caller a chance to change bolt settings before we
+      # start using them.
+      yield(Bolt::Config) if block
+      
+      # Extend the User model
+      require_dependency(Bolt::Config.user_model.to_s)
+      Bolt::Config.user_model_class.send(:include, Bolt::UserModelExt)
+    end
+    
+  end
+end
