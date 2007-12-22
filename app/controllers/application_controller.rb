@@ -40,18 +40,37 @@ class ApplicationController < ActionController::Base
   #  require_authentication(:only => :create)
   #
   #  require_authentication(:except => [:show, :rss])
+  #
+  # You can use this on any controller, or place it in your
+  # ApplicationController to make it apply to all controllers.  In
+  # which case, you can remove it from specific controllers using
+  # skip_before_filter:
+  #
+  #  skip_before_filter(:authenticate)
   def self.require_authentication (*args)
     before_filter(:authenticate, *args)
   end
   
   ################################################################################
+  # Require that the current user have the given permissions.  This
+  # call sets a before_filter that will first authenticate the user
+  # (if necessary) and then checks the current users permissions.
+  #
+  # Examples:
+  #
+  #  require_authorization(:admin)
+  #
+  #  require_authorization(:create_users, :delete_users, :only => [:create, :destroy])
   def self.require_authorization (*permissions)
     options = permissions.last.is_a?(Hash) ? permissions.pop : {}
     before_filter(options) {|c| c.instance_eval {authorize(*permissions)}}
   end
   
   ################################################################################
-  # Ensure that the current user is logged in
+  # Ensure that the current user is logged in.  You can use this
+  # method directly if necessary, but is intended to be used from
+  # within a before_filter (the one created when you call
+  # require_authentication).
   def authenticate
     user = self.current_user if self.logged_in?
 
@@ -69,8 +88,8 @@ class ApplicationController < ActionController::Base
   # is a list of permission names that the current user must have.  The
   # last argument can be a hash with the following keys:
   #
-  # * +:or_user_matches+: If set to a User object, return true if that user is the current user.
-  # * +:condition+: Returns true if this key is the true value
+  # +:or_user_matches+:: If set to a User object, return true if that user is the current user.
+  # +:condition+:: Returns true if this key is the true value
   #
   # So, why call this method and use one of the options above?  Because
   # this method forces authentication and may be useful when called from
@@ -79,16 +98,16 @@ class ApplicationController < ActionController::Base
   # There are two special instance methods that your controller can
   # implement as callbacks:
   #
-  # * +unauthorized+: Called when authorization failed.  You can do
-  #                   whatever you like here, redirect, render something,
-  #                   set a flash message, it's up to you. If you don't
-  #                   supply this method, an automatic redirection will
-  #                   happen.
+  # +unauthorized+:: 
+  # Called when authorization failed.  You can do
+  # whatever you like here, redirect, render something, set a flash
+  # message, it's up to you. If you don't supply this method, an
+  # automatic redirection will happen.
   #
-  # * +check_allowance+: If you supply this method, the user and
-  #                      allowance will be passed to it.  You should
-  #                      explicitly return false if the user isn't
-  #                      authroized to continue.
+  # +check_allowance+:: 
+  # If you supply this method, the user and
+  # allowance will be passed to it.  You should explicitly return
+  # false if the user isn't authroized to continue.
   ################################################################################
   def authorize (*permissions)
     return false unless user = authenticate

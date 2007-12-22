@@ -28,19 +28,32 @@ module Bolt
 
     ################################################################################
     # Check to see if a remote web user has been authenticated.
+    # Returns true if the user has authenticated and logged in, false
+    # otherwise.
     def logged_in?
       !session[:user_id].nil?
     end
 
     ################################################################################
-    # Get the model object for the logged in user.
+    # Get the model object for the logged in user.  If the user is not
+    # logged in (if the logged_in? method would return false),
+    # current_user will create a new user model object and return that
+    # instead.  The class used as the user model is configured using
+    # the Bolt::Config#user_model method.
     def current_user
       model = Bolt::Config.user_model_class
       @current_user ||= (logged_in? ? model.find(session[:user_id]) : model.new)
     end
 
     ################################################################################
-    # Set the logged in user, or log the current user out (by giving nil).
+    # Set the logged in user, or log the current user out (by giving
+    # nil).  Because of a parsing ambiguity in Ruby, you should call
+    # this method like so:
+    # 
+    #  self.current_user = user
+    #
+    # Otherwise you won't call this method, but will instead create a
+    # local variable called current_user.
     def current_user= (user)
       session[:user_id] = user ? user.id : nil
       @current_user = user # to update the @current_user cache

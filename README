@@ -38,6 +38,37 @@ these steps:
  end
 
 
+== Authentication
+
+The Bolt plugin provides a SessionsController that performs the work of
+authenticating and logging a user in.  You can request that a user be
+authenticated by using the ApplicationController.require_authentication
+method in your controller.
+
+There are a few authentication state helper methods added to all your
+controllers and views.  You can read about these helpers in
+Bolt::State.  These helpers include +current_user+.
+
+
+== Authorization
+
+Authorization is achieved through roles. Users are associated with
+roles, and roles have specific permissions.  Each user can optionally
+be associated with one or more roles, and a role can have any number
+of permissions.
+
+You'll probably want to read the documentation in the Role model, the
+Permission model, and the Allowance model.
+
+There are a number of authorization helper methods that are added to
+your user model class.  You can find out more information about these
+methods, such as <tt>can?</tt> in the Bolt::UserModelExt
+module.
+
+You can have your controller perform authorization by using the
+ApplicationController.require_authorization class method.
+
+
 == Authenticating With an External Source
 
 1. Write a class that looks like the Identity class

@@ -37,36 +37,36 @@ module Bolt
     
     ################################################################################
     # The public name of your Rails application
-    @@application_name = 'Your Rails App'
     cattr_accessor(:application_name)
+    @@application_name = 'Your Rails App'
     
     ################################################################################
     # The email address to use as the sender address when Bolt sends out emails.
-    @@email_from = 'noreply@example.com'
     cattr_accessor(:email_from)
+    @@email_from = 'noreply@example.com'
     
     ################################################################################
     # The class of your ActiveRecord model used to hold information about users.
-    @@user_model = :user
     cattr_accessor(:user_model)
+    @@user_model = :user
     
     ################################################################################
     # The default URL to send someone after they have successfully logged in.
-    @@after_login_url = '/'
     cattr_accessor(:after_login_url)
+    @@after_login_url = '/'
     
     ################################################################################
     # The URL to send someone after they have logged out.
-    @@after_logout_url = '/'
     cattr_accessor(:after_logout_url)
+    @@after_logout_url = '/'
     
     ################################################################################
     # If true, record the URL that was being requested when the system
     # decided to do a redirect to the login page.  The user will then
     # be returned to the recorded URL after login, instead of the
     # default URL.
-    @@record_url = true
     cattr_accessor(:record_url)
+    @@record_url = true
 
     ################################################################################
     # If true, the user_name will always be cleaned before being used.
@@ -79,35 +79,35 @@ module Bolt
     
     ################################################################################
     # The minimum number of characters that a password must have.
-    @@min_password_length = 6
     cattr_accessor(:min_password_length)
+    @@min_password_length = 6
     
     ################################################################################
     # A regular expression that passwords must match.
-    @@password_must_match = /./
     cattr_accessor(:password_must_match)
+    @@password_must_match = /./
     
     ################################################################################
     # An error message displayed when the validation regular
     # expression doesn't match.  The validation regular expression is
     # configured with the password_must_match option.
-    @@password_error_message = 'Please choose a valid password'
     cattr_accessor(:password_error_message)
+    @@password_error_message = 'Please choose a valid password'
     
     ################################################################################
     # Allow OpenID authentication.  (Not yet implemented)
-    @@enable_openid = false
     cattr_accessor(:enable_openid)
+    @@enable_openid = false
     
     ################################################################################
     # The authentication back-end class to use.
-    @@backend = :identity
     cattr_accessor(:backend)
+    @@backend = :identity
 
     ################################################################################
     # What to call the user name in forms (such as the login form)
-    @@user_name_label = 'Email Address'
     cattr_accessor(:user_name_label)
+    @@user_name_label = 'Email Address'
     
     ################################################################################
     # Returns the class of the user model.  You configure the user
