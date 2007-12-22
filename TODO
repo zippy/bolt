@@ -1,4 +1,15 @@
 -*- mode: org -*-
 
-* TODO Come up with a clever way to set configuration options from environment.rb
 * TODO Figure out why the wrong users.yml fixture is being loaded
+* TODO Document the ActivationsController class
+* TODO Write a PasswordsController class
+  - Allow logged in users to change their password
+  - Request a password reset code, email to user
+  - Accept password reset code, and set password
+* TODO Write a IdentitiesController class
+  - Allow admin users to view/search user list
+  - Disable user accounts
+  - Create user accounts
+  - Destroy user accounts
+* TODO Write a PermissionsController class
+  - Allow admin users to manage Roles/Permissions/Allowances
