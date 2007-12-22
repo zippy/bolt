@@ -28,7 +28,7 @@ class Identity < ActiveRecord::Base
   validates_uniqueness_of(:user_name)
 
   ################################################################################
-  attr_accessible(:user_name)
+  attr_accessible(:user_name, :openid_url)
 
   ################################################################################
   # Finder that cleans the user name if necessary

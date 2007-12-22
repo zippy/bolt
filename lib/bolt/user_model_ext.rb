@@ -47,7 +47,7 @@ module Bolt
         end
       end
       
-      klass.has_and_belongs_to_many(:roles)
+      klass.has_and_belongs_to_many(:roles, :join_table => 'roles_users')
       klass.has_many(:allowances,  :through => :role)
       klass.has_many(:permissions, :through => :allowances)
       
@@ -76,11 +76,11 @@ module Bolt
     # Create an identity account to match this user account.  The
     # options hash controls how the identity account is created:
     # 
-    # +user_name+: The method to call on the user model to get the user name, defaults to :email
-    # +openid_url+: Can be used instead of a user_name if using OpenID
-    # +password+: The plain text password for this identity
-    # +confirmation+: An optional password confirmation, will be tested against the password
-    # +activation+: Create the identity, but require activation before it can be used
+    # +user_name+:: The method to call on the user model to get the user name, defaults to :email
+    # +openid_url+:: Can be used instead of a user_name if using OpenID
+    # +password+:: The plain text password for this identity
+    # +confirmation+:: An optional password confirmation, will be tested against the password
+    # +activation+:: Create the identity, but require activation before it can be used
     #
     # If a block is given, it will be called after an identity has
     # been created and successfully saved.  It is passed the new
