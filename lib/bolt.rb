@@ -33,3 +33,7 @@ require 'bolt/bolt_controller_methods'
 # Extend controllers and views so they have access to login state
 ActionController::Base.send(:include, Bolt::State)
 ActionView::Base.send(:include, Bolt::State)
+
+################################################################################
+# Add authentication and authorization code to controllers
+ActionController::Base.send(:include, Bolt::Authentication)

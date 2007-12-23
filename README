@@ -26,10 +26,10 @@ Once you have Rails Engines installed, place Bolt into your
 vendor/plugins directory as you would any other plugin.  Then follow
 these steps:
 
-1. Create migrations: script/generate plugin_migration
-2. Migrate your database: rake db:migrate
-3. Place this line in your routes file: map.from_plugin(:bolt)
-4. Add a bolt_identity_id column to your user model
+1. Create migrations: <tt>script/generate plugin_migration</tt>
+2. Migrate your database: <tt>rake db:migrate</tt>
+3. Place this line in your routes file: <tt>map.from_plugin(:bolt)</tt>
+4. Add a <tt>bolt_identity_id</tt> column to your user model
 5. Add a call to Bolt::Initializer at the bottom of your environment.rb
 
  Bolt::Initializer.run do |bolt|
@@ -40,10 +40,13 @@ these steps:
 
 == Authentication
 
-The Bolt plugin provides a SessionsController that performs the work of
-authenticating and logging a user in.  You can request that a user be
-authenticated by using the ApplicationController.require_authentication
-method in your controller.
+The Bolt plugin provides a SessionsController that performs the work
+of authenticating and logging a user in.  You can request that a user
+be authenticated by using the +require_authentication+ class method in
+your controller.
+
+See Bolt::Authentication::ClassMethods for more details about
+requesting that authentication happen.
 
 There are a few authentication state helper methods added to all your
 controllers and views.  You can read about these helpers in
@@ -66,7 +69,8 @@ methods, such as <tt>can?</tt> in the Bolt::UserModelExt
 module.
 
 You can have your controller perform authorization by using the
-ApplicationController.require_authorization class method.
++require_authorization+ class method.  See Bolt::Authorization for
+more information.
 
 
 == Authenticating With an External Source

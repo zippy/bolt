@@ -33,7 +33,7 @@ module Bolt
     
     ################################################################################
     # This method is called when this module is included into the user model.
-    def self.included (klass)
+    def self.included (klass) # :nodoc:
       # Do a safety check, make sure the users table has the correct foreign key
       if klass.table_exists? and !klass.columns.map(&:name).include?('bolt_identity_id')
         raise "#{klass} is missing the bolt_identity_id column" 

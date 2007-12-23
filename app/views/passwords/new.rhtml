@@ -1,0 +1,30 @@
+<% @page_title = 'Change Your Passowrd' %>
+
+<% form_tag(passwords_path) do -%>
+  <fieldset>
+    <legend>Change Your Password</legend>
+
+    <% unless @password_error.blank? -%>
+      <div class="formError">
+        <p><%= h(@password_error) %></p>
+      </div>
+    <% end -%>
+    
+    <p>
+      <label for="id">Current Password:</label>
+      <%= password_field_tag(:current) %>
+    </p>
+    
+    <p>
+      <label for="password">Choose a New Password:</label>
+      <%= password_field_tag(:password) %>
+    </p>
+    
+    <p>
+      <label for="confirmation">Confirm New Password:</label>
+      <%= password_field_tag(:confirmation) %>
+    </p>
+
+    <%= submit_tag('Change Password') %>
+  </fieldset>
+<% end -%>
