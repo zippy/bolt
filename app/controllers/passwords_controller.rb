@@ -72,16 +72,37 @@ class PasswordsController < ApplicationController
   ################################################################################
   # Help a user change his password when it was forgotten
   def forgot
+    if !params[:login].blank? and
+        identity = Bolt::Config.backend_class.find_by_user_name(params[:login])
+    then
+      identity.reset_code! if identity.reset_code.blank? # keep old reset code
+      BoltNotifications.deliver_password_reset_notice(identity.user_model_object, identity, password_path(identity.reset_code))
+      redirect_to(:action => 'resetcode')
+    end
   end
   
   ################################################################################
-  # Show the form necessary to reset a password when you're not logged in
-  def edit
+  # Allow the user to enter a password reset code.
+  def resetcode
+    render(:action => 'show')
   end
   
   ################################################################################
-  # Reset a password for someone who is not logged, but has a reset code
+  # Show the form necessary to reset a password when you're not logged
+  # in.  This is like the resetcode action, except the reset code was
+  # given in the URL in the :id param.
+  def show
+  end
+  
+  ################################################################################
+  # Reset a password for someone who is not logged in, but has a reset code
   def update
+    args = [params[:login], params[:id], params[:password], params[:confirmation]]
+    identity = Bolt::Config.backend_class.reset_password!(*args)
+    login(identity.user_model_object) and return if identity and identity.valid?
+    @reset_error = identity.errors.full_messages.join("\n") if identity
+    @reset_error ||= 'Invalid password reset code.'
+    render(:action => 'show')
   end
   
   ################################################################################

@@ -42,5 +42,38 @@ class PasswordsControllerTest < Test::Unit::TestCase
     identity = Identity.find(user.bolt_identity_id)
     assert(identity.password?('foobaz'))
   end
+
+  ################################################################################
+  def test_user_can_reset_password
+    user = users(:pjones)
+    identity = user.bolt_identity
+    identity.reset_code!
+    
+    params = {
+      :id           => identity.reset_code,
+      :login        => user.email,
+      :password     => 'foobaz',
+      :confirmation => 'foobaz',
+    }
+    
+    post(:update, params)
+    assert_response(:redirect)
+    assert_not_nil(session[:user_id])
+    identity.reload
+    assert(identity.reset_code.blank?)
+    assert(identity.password?('foobaz'))
+  end
+
+  ################################################################################
+  def test_requesting_reset_code
+    user = users(:pjones)
+    identity = user.bolt_identity
+    assert(identity.reset_code.blank?)
+    post(:forgot, :login => user.email)
+    assert_response(:redirect)
+    assert_redirected_to(:action => 'resetcode')
+    identity.reload
+    assert(!identity.blank?)
+  end
   
 end

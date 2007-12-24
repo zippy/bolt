@@ -209,8 +209,10 @@ class Identity < ActiveRecord::Base
   ################################################################################
   # Create a password reset code for this account
   def reset_code!
-    self.reset_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt)
-    self.reset_code = self.class.standardize_code(self.reset_code)
+    self.reset_code = Digest::MD5.hexdigest(user_name + object_id.to_s + Bolt::Encode.mksalt)
+    self.reset_code = self.class.standardize_code(reset_code)
+    self.save!
+    self.reset_code
   end
 
   ################################################################################
