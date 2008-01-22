@@ -22,19 +22,22 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 ################################################################################
-require 'bolt/config'
-require 'bolt/initializer'
-require 'bolt/encode'
-require 'bolt/state'
-require 'bolt/user_model_ext'
-require 'bolt/bolt_controller_methods'
-require 'bolt/dependencies_ext'
+module Dependencies
 
-################################################################################
-# Extend controllers and views so they have access to login state
-ActionController::Base.send(:include, Bolt::State)
-ActionView::Base.send(:include, Bolt::State)
+  ################################################################################
+  # Allow Bolt to augment the user model after it was reloaded in development mode
+  def self.load_file_with_augment_user (*args) # :nodoc:
+    result = load_file_without_augment_user(*args)
 
-################################################################################
-# Add authentication and authorization code to controllers
-ActionController::Base.send(:include, Bolt::Authentication)
+    if args.first == File.join(RAILS_ROOT, 'app/models', Bolt::Config.user_model.to_s + '.rb')
+      Bolt::Initializer.augment_user_model
+    end
+
+    result
+  end
+
+  class << self
+    alias_method_chain(:load_file, :augment_user)
+  end
+
+end

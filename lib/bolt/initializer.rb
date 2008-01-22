@@ -39,11 +39,14 @@ module Bolt
       # Give the caller a chance to change bolt settings before we
       # start using them.
       yield(Bolt::Config) if block
-      
-      # Extend the User model
       require_dependency(Bolt::Config.user_model.to_s)
+      augment_user_model
+    end
+
+    ################################################################################
+    def self.augment_user_model # :nodoc:
       Bolt::Config.user_model_class.send(:include, Bolt::UserModelExt)
     end
-    
+
   end
 end
