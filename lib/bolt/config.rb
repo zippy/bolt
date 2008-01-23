@@ -108,7 +108,13 @@ module Bolt
     # What to call the user name in forms (such as the login form)
     cattr_accessor(:user_name_label)
     @@user_name_label = 'Email Address'
-    
+
+    ################################################################################
+    # The secret to use for forgery prevention in forms.  Taken from
+    # the ApplicationController by default.
+    cattr_accessor(:forgery_secret)
+    @@forgery_secret = nil
+
     ################################################################################
     # Returns the class of the user model.  You configure the user
     # model using Bolt::Config.user_model, not this method.
