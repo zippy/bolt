@@ -39,6 +39,9 @@ module Bolt
         raise "#{klass} is missing the bolt_identity_id column" 
       end
 
+      # Protect the bolt_identity_id column
+      klass.attr_protected(:bolt_identity_id)
+
       # Additional validations that need to be added to the user model
       klass.validate do |record|
         # Transfer errors from the Bolt::Identity model to the record
