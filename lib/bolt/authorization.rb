@@ -49,7 +49,7 @@ module Bolt
       #  require_authorization(:admin)
       #
       #  require_authorization(:create_users, :delete_users, :only => [:create, :destroy])
-      def self.require_authorization (*permissions)
+      def require_authorization (*permissions)
         options = permissions.last.is_a?(Hash) ? permissions.pop : {}
         before_filter(options) {|c| c.instance_eval {authorize(*permissions)}}
       end
