@@ -12,9 +12,15 @@ such as LDAP.
 
 == Status
 
-Bolt is currently in early development.  Work should progress quickly,
-however.  Until it is ready for production, you might want to look at
-the Rauth plugin instead: http://pmade.com/svn/oss/rauth/trunk/
+As of January 25, 2008:
+
+Bolt is currently being used in production.  It has a health set of
+unit and functional tests that are all passing.
+
+It is, however, missing a few view files for the password changing
+controller, and such controllers need to be documented.
+
+As soon as those items are done, I'll release 1.0.
 
 
 == Installation
@@ -36,6 +42,9 @@ these steps:
    bolt.application_name = 'My Fancy Rails Application'
    bolt.email_from = 'Account Team <me@example.com>'
  end
+
+For a complete list of configuration options that Bolt uses, please
+see Bolt::Config.
 
 
 == Authentication
@@ -60,17 +69,16 @@ roles, and roles have specific permissions.  Each user can optionally
 be associated with one or more roles, and a role can have any number
 of permissions.
 
-You'll probably want to read the documentation in the Role model, the
-Permission model, and the Allowance model.
-
 There are a number of authorization helper methods that are added to
 your user model class.  You can find out more information about these
 methods, such as <tt>can?</tt> in the Bolt::UserModelExt
 module.
 
 You can have your controller perform authorization by using the
-+require_authorization+ class method.  See Bolt::Authorization for
-more information.
++require_authorization+ class method.  
+
+For more specific information about authorization, please see
+Bolt::Authorization.
 
 
 == Authenticating With an External Source
@@ -81,7 +89,8 @@ more information.
 
 == History
 
-Bolt is a derivative of Peter Jones' Rauth plugin for Rails.
+Bolt is a derivative of Peter Jones' Rauth plugin for Rails, which
+itself was taken from the Devalot Rails application.
 
 
 == Rauth Comparison

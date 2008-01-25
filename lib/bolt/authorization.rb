@@ -25,9 +25,34 @@
 module Bolt
   
   ################################################################################
-  # Methods added to all controllers for authorization proses.
   # Authorization is when you check to see if the current user has
-  # permission to perform an action.
+  # permission to perform an action.  Bolt provides two ways to
+  # perform authorization.  The first is by using a controller before
+  # filter, the second is by querying the user model directly.
+  #
+  # Before you being using the authorization services of Bolt, you'll
+  # want to create some user roles.  I usually make use of migrations
+  # to create the initial set of roles and permissions.
+  #
+  #  Permission.create!(:name => 'edit_blogs')
+  #  Permission.create!(:name => 'add_users')
+  #
+  #  admin_role = Role.create!(:name => 'System Administrator')
+  #  admin_role.allowances.add('edit_blogs')
+  #  admin_role.allowances.add('add_users')
+  #
+  #  some_user_object.roles << admin_role
+  #  some_user_object.can?(:add_users) # => true
+  #
+  # You can have your controller perform authorization by using the
+  # +require_authorization+ class method.
+  #
+  # For further information about authorization, see the following:
+  # * Bolt::UserModelExt (for helper methods like +can?+)
+  # * Role (the role model)
+  # * Permission (the permission model)
+  # * Allowance (the allowance model)
+  # * Bolt::Authorization::ClassMethods (for the +require_authorization+ method)
   module Authorization
     
     ################################################################################
