@@ -22,6 +22,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 ################################################################################
+require 'fileutils'
+
+################################################################################
 module Dependencies
 
   ################################################################################
@@ -29,7 +32,7 @@ module Dependencies
   def self.load_file_with_augment_user (*args) # :nodoc:
     result = load_file_without_augment_user(*args)
 
-    if args.first == File.join(RAILS_ROOT, 'app/models', Bolt::Config.user_model.to_s + '.rb')
+    if FileUtils.identical?(args.first, File.join(RAILS_ROOT, 'app/models', Bolt::Config.user_model.to_s + '.rb'))                                                                       
       Bolt::Initializer.augment_user_model
     end
 
