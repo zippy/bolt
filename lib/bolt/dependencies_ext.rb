@@ -31,8 +31,9 @@ module Dependencies
   # Allow Bolt to augment the user model after it was reloaded in development mode
   def self.load_file_with_augment_user (*args) # :nodoc:
     result = load_file_without_augment_user(*args)
-
-    if FileUtils.identical?(args.first, File.join(RAILS_ROOT, 'app/models', Bolt::Config.user_model.to_s + '.rb'))                                                                       
+    path   = Bolt::Config.user_model_path
+    
+    if File.exist?(path) and FileUtils.identical?(args.first, path)
       Bolt::Initializer.augment_user_model
     end
 

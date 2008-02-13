@@ -121,6 +121,12 @@ module Bolt
     def self.user_model_class
       load_class_for(user_model)
     end
+
+    ################################################################################
+    # Returns the full path to the user model source file
+    def self.user_model_path
+      File.join(RAILS_ROOT, 'app/models', Bolt::Config.user_model.to_s + '.rb')
+    end
     
     ################################################################################
     # Returns the class of the back-end authentication interface
