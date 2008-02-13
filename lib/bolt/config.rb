@@ -110,6 +110,11 @@ module Bolt
     @@user_name_label = 'Email Address'
 
     ################################################################################
+    # How to validate email addresses (if asked to do so)
+    cattr_accessor(:email_regex)
+    @@email_regex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+    
+    ################################################################################
     # The secret to use for forgery prevention in forms.  Taken from
     # the ApplicationController by default.
     cattr_accessor(:forgery_secret)
