@@ -92,7 +92,7 @@ class ActivationsControllerTest < Test::Unit::TestCase
   ################################################################################
   def create_user_and_identity (options={})
     @user = User.new(:first_name => 'Peter', :last_name => 'Jones', 
-                    :email => "#{Time.now.to_s}@pmade.com")
+                    :email => "#{Time.now.to_i}@pmade.com")
 
     assert(@user.save)
     assert(@code = @user.create_bolt_identity(options.update(:activation => true)))

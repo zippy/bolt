@@ -9,5 +9,5 @@ resources(:activations,
 
 # Password Changing
 resources(:passwords, 
-          :collection => {:forgot    => :any},
+          :collection => {:forgot    => :any, :resetcode => :get},
           :member     => {:resetcode => :get})
