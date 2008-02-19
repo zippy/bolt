@@ -1,15 +1,19 @@
 -*- mode: org -*-
 
-* TODO Figure out why the wrong users.yml fixture is being loaded
-* TODO Document the ActivationsController class
-* TODO Write a PasswordsController class
-  - Allow logged in users to change their password
-  - Request a password reset code, email to user
-  - Accept password reset code, and set password
-* TODO Write a IdentitiesController class
-  - Allow admin users to view/search user list
-  - Disable user accounts
-  - Create user accounts
-  - Destroy user accounts
-* TODO Write a PermissionsController class
-  - Allow admin users to manage Roles/Permissions/Allowances
+* Testing
+  - [ ] Figure out why the wrong users.yml fixture is being loaded
+* Documentation
+  - [ ] Document the ActivationsController class
+* Passwords Controller
+  - [ ] Allow logged in users to change their password
+  - [ ] Request a password reset code, email to user
+  - [ ] Accept password reset code, and set password
+* Identities Controller
+  - [ ] Allow admin users to view/search user list
+  - [ ] Disable user accounts
+  - [ ] Create user accounts
+  - [ ] Destroy user accounts
+* Permissions Controller
+  - [ ] Allow admin users to manage Roles/Permissions/Allowances
+* Encoding
+  - [ ] Base64 codes a la Eva
