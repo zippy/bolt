@@ -27,20 +27,37 @@ require 'digest/sha2'
 
 ################################################################################
 module Bolt
+  
   ################################################################################
+  # Methods for encoding text, such as making password salt, and
+  # SHA256 digests.
   module Encode
 
     ################################################################################
-    # Make a SHA256 and salt encoded password
+    # Make a SHA256 and salt encoded password.
     def self.mkpasswd (plain, salt)
       Digest::SHA256.hexdigest(plain + salt)
     end
 
     ################################################################################
-    # Create a salt string
+    # Make a salt string.
     def self.mksalt
       [Array.new(6) {rand(256).chr}.join].pack('m').chomp
     end
-
+    
+    ################################################################################
+    # Make a Base64 encoded token string.  The input text will be
+    # passed through Digest::MD5, and then Base64 encoded, with some
+    # small changes to make it useful in a URL.
+    #
+    # Example:
+    #
+    #  mktoken('foo') # => rL0Y20zC-Fzt72VPzMSk2A
+    def self.mktoken (input)
+      hash = Digest::MD5.new
+      hash << input
+      hash.digest.to_a.pack('m*').tr('/+', '_-')[0..-4]
+    end
+    
   end
 end

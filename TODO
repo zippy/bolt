@@ -16,4 +16,4 @@
 * Permissions Controller
   - [ ] Allow admin users to manage Roles/Permissions/Allowances
 * Encoding
-  - [ ] Base64 codes a la Eva
+  - [X] Base64 codes a la Eva
