@@ -17,3 +17,5 @@
   - [ ] Allow admin users to manage Roles/Permissions/Allowances
 * Encoding
   - [X] Base64 codes a la Eva
+* Authentication
+  - [ ] URL token authentication (authtoken)
