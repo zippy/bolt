@@ -9,7 +9,7 @@ class SessionsController; def rescue_action(e) raise e end; end
 ################################################################################
 class SessionsControllerTest < Test::Unit::TestCase
   ################################################################################
-  self.fixture_path = File.join(File.dirname(__FILE__), '..', 'fixtures')
+  Engines::Testing.set_fixture_path
   fixtures(:identities, :users)
 
   ################################################################################
@@ -32,6 +32,7 @@ class SessionsControllerTest < Test::Unit::TestCase
     post(:create, :login => pjones.email, :password => 'foobar')
     assert_response(:redirect)
     assert_not_nil(session[:user_id])
+    assert_equal(pjones.id, session[:user_id])
   end
   
 end

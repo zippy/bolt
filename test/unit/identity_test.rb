@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 ################################################################################
 class IdentityTest < Test::Unit::TestCase
   ################################################################################
-  self.fixture_path = File.join(File.dirname(__FILE__), '..', 'fixtures')
+  Engines::Testing.set_fixture_path
   fixtures(:identities)
 
   ################################################################################

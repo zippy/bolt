@@ -74,6 +74,7 @@ module Bolt
       # require_authentication).
       def authenticate
         user = self.current_user if self.logged_in?
+        user ||= Bolt::HttpBasic.authenticate(self) if Bolt::Config.use_http_basic
 
         if !user or (user.respond_to?(:enabled?) and !user.enabled?)
           session[:bolt_after_login] = request.request_uri if Bolt::Config.record_url 

@@ -9,7 +9,7 @@ class PasswordsController; def rescue_action(e) raise e end; end
 ################################################################################
 class PasswordsControllerTest < Test::Unit::TestCase
   ################################################################################
-  self.fixture_path = File.join(File.dirname(__FILE__), '..', 'fixtures')
+  Engines::Testing.set_fixture_path
   fixtures(:identities, :users)
 
   ################################################################################

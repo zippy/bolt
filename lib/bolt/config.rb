@@ -121,6 +121,11 @@ module Bolt
     @@forgery_secret = nil
 
     ################################################################################
+    # Allow authentication via HTTP Basic
+    cattr_accessor(:use_http_basic)
+    @@use_http_basic = true
+    
+    ################################################################################
     # Returns the class of the user model.  You configure the user
     # model using Bolt::Config.user_model, not this method.
     def self.user_model_class

@@ -1,9 +1,9 @@
 -*- mode: org -*-
+#+STARTUP: showall
 
-* Testing
-  - [ ] Figure out why the wrong users.yml fixture is being loaded
 * Documentation
   - [ ] Document the ActivationsController class
+  - [ ] Write some Muse documentation
 * Passwords Controller
   - [ ] Allow logged in users to change their password
   - [ ] Request a password reset code, email to user
@@ -15,7 +15,3 @@
   - [ ] Destroy user accounts
 * Permissions Controller
   - [ ] Allow admin users to manage Roles/Permissions/Allowances
-* Encoding
-  - [X] Base64 codes a la Eva
-* Authentication
-  - [ ] URL token authentication (authtoken)
