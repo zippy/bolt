@@ -4,6 +4,3 @@
 	Basic authentication credentials are present in the HTTP headers,
 	attempt to authenticate using those, instead of redirecting to the
 	sessions controller.
-
-	* test/unit/identity_test.rb (IdentityTest): Use
-	Engines::Testing.set_fixture_path
