@@ -25,27 +25,7 @@ As soon as those items are done, I'll release 1.0.
 
 == Installation
 
-Rails Engines needs to be installed into your Rails application.  You
-can find out more about Rails Engines here: http://rails-engines.org/
-
-Once you have Rails Engines installed, place Bolt into your
-vendor/plugins directory as you would any other plugin.  Then follow
-these steps:
-
-1. Create migrations: <tt>script/generate plugin_migration</tt>
-2. Migrate your database: <tt>rake db:migrate</tt>
-3. Place this line in your routes file: <tt>map.from_plugin(:bolt)</tt>
-4. Add a <tt>bolt_identity_id</tt> column to your user model
-5. Add a call to Bolt::Initializer at the bottom of your environment.rb
-
- Bolt::Initializer.run do |bolt|
-   bolt.application_name = 'My Fancy Rails Application'
-   bolt.email_from = 'Account Team <me@example.com>'
- end
-
-For a complete list of configuration options that Bolt uses, please
-see Bolt::Config.
-
+See the +doc/install.muse+ file.
 
 == Authentication
 

@@ -1,0 +1,58 @@
+#title Installing Bolt
+#author Peter Jones
+
+Rails Engines needs to be installed into your Rails application.  You
+can find out more about Rails Engines [[http://rails-engines.org/][here]].
+
+Once you have Rails Engines installed, place Bolt into your
+=vendor/plugins= directory as you would any other plugin.  Then follow
+these steps.
+
+* Step 1. Migrating the Database Schema
+
+Create the necessary migration file, and migrate your database schema:
+
+<example>
+$ script/generate plugin_migration
+$ rake db:migrate
+</example>
+
+* Step 2. Add a Column to Your User Model
+
+Bolt does not place any restrictions on which model you consider your
+"user" model.  However, in all the documentation for Bolt, it is
+usually referred to as the =User= model.
+
+Alter your =User= model in a migration like so:
+
+<src lang="ruby">
+add_column(:users, :bolt_identity_id, :integer)
+add_index(:users, :bolt_identity_id, :unique => true)
+</src>
+
+* Step 3. Configure URL Routing
+
+In your =config/routes.rb= file:
+
+<src lang="ruby">
+map.from_plugin(:bolt)
+</src>
+
+* Step 4. Configure Bolt
+
+Place a Bolt configuration block into the correct file.  For Rails
+1.2.X, use the =config/environment.rb= file (near the end).  For Rails
+2.X, create a =config/initializers/bolt.rb= file.
+
+Here is an example configuration block for Bolt:
+
+<src lang="ruby">
+Bolt::Initializer.run do |bolt|
+  bolt.application_name = 'My Fancy Rails Application'
+  bolt.email_from = 'Account Team <me@example.com>'
+end
+</src>
+
+For a complete list of configuration options, please consult the API
+documentation for the =Bolt::Config= class, or review the =config.rb= file
+in the Bolt =lib= directory.
