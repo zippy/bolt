@@ -36,7 +36,7 @@ module Bolt
     def self.included (klass) # :nodoc:
       # Do a safety check, make sure the users table has the correct foreign key
       if klass.table_exists? and !klass.columns.map(&:name).include?('bolt_identity_id')
-        raise "#{klass} is missing the bolt_identity_id column" 
+        raise "#{klass} is missing the bolt_identity_id column" unless $0.match(/\/rake$/)
       end
 
       # Protect the bolt_identity_id column
