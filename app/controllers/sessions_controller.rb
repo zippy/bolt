@@ -25,6 +25,10 @@
 class SessionsController < ApplicationController
 
   ################################################################################
+  # Ensure that sessions are enabled.
+  session(:disabled => false)
+  
+  ################################################################################
   # Skip the Bolt authenticate filter (if it's in use)
   skip_before_filter(:authenticate)
 
