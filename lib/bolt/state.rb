@@ -32,6 +32,14 @@ module Bolt
     # otherwise.
     def logged_in?
       !session[:user_id].nil?
+      if !session[:user_id].nil? 
+        expiration = Bolt::Config.session_expiration_time
+        last_action_key = Bolt::Config.store_last_action_time_in_session
+        the_time_num = last_action_key ? session[last_action_key] : (session.model.updated_at.to_i ||= 0)
+        if !expiration || (Time.now.to_i - the_time_num < expiration)
+          true
+        end	
+      end
     end
 
     ################################################################################

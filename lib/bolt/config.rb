@@ -124,6 +124,20 @@ module Bolt
     # Allow authentication via HTTP Basic
     cattr_accessor(:use_http_basic)
     @@use_http_basic = true
+
+    ################################################################################
+    # Save a copy of the last action time in the session.  This is used to
+    # calculate expiration and must be set to true if you want expiration to work
+    # if you are storing your sessions in the cookie instead of in a model.  If
+    # you are using a model for your sessions, bolt will get the action time from
+    # the model's updated_at attribute.
+    cattr_accessor(:store_last_action_time_in_session)
+    @@store_last_action_time_in_session = false
+
+    ################################################################################
+    # Specify a time after which the current login session should expire
+    cattr_accessor(:session_expiration_time)
+    @@session_expiration_time = nil
     
     ################################################################################
     # Returns the class of the user model.  You configure the user
