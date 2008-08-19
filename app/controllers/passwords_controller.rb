@@ -55,12 +55,25 @@ class PasswordsController < ApplicationController
   end
   
   ################################################################################
-  # Attempt to change the password for a logged in user (create password)
+  # Attempt to change the password for a user
+  # if the @identity instance variable was set (in a before filter, for example)
+  # use that identity, otherwise assume use the identity of the current user
+  # Assumes that the current password is required, but you can also unset that in
+  # a before filter by setting @require_current_password to false
   def create
-    @identity = current_user.bolt_identity
-    args = [params[:current], params[:password], params[:confirmation]]
+    @identity ||= current_user.bolt_identity
+    @require_current_password ||= true
+    
+    args = [params[:password], params[:confirmation]]
+    if @require_current_password
+      args.unshift params[:current]
+      password_changed = @identity.change_password(*args)
+    else
+      password_with_confirmation(*args)
+      password_changed = @identity.valid?
+    end
 
-    if @identity.change_password(*args) and @identity.save
+    if password_changed and @identity.save
       redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
       session[:bolt_after_login] = nil
     else
