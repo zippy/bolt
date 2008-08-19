@@ -45,6 +45,9 @@ module Bolt
         last_action_key = Bolt::Config.store_last_action_time_in_session
         session[last_action_key] = Time.now.to_i if last_action_key
         self.current_user = user
+        if user.respond_to?(:login_action)
+          user.login_action(request)
+        end
         redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
         session[:bolt_after_login] = nil
         true
