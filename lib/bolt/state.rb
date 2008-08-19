@@ -68,5 +68,25 @@ module Bolt
       reset_session if user.nil?
     end
 
+    ################################################################################
+  	# Return a hash of user_ids and last_action times of all users with currently valid sessions
+  	def get_logged_in_users
+  		raise "Sessions need to be stored in ActiveRecordStore to determine logged in users" if !/ActiveRecordStore/.match(ApplicationController.session_store.to_s)
+  		expiration = Bolt::Config.session_expiration_time
+      last_action_key = Bolt::Config.store_last_action_time_in_session
+      users_hash = {}
+  		@sessions = CGI::Session::ActiveRecordStore.session_class.find(:all) 
+  		@sessions.each do |session|
+  			data_hash = CGI::Session::ActiveRecordStore.session_class.unmarshal(session[:data])
+  			if the_user_id = data_hash[:user_id]
+  				the_time_num = last_action_key ? data_hash[last_action_key] ||= 0 : (session.updated_at.to_i ||= 0)
+  				if !expiration || (Time.now.to_i - the_time_num < expiration)
+  					users_hash[the_user_id] = Time.at(the_time_num).utc
+  				end
+  			end
+  		end
+  		users_hash
+  	end
+
   end
 end
