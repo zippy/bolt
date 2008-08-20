@@ -36,12 +36,12 @@ class BoltNotifications < ActionMailer::Base
 
   ################################################################################
   # Send out an email that tells the user how to reset their password.
-  def password_reset_notice (user, identity, url)
+  def password_reset_notice (email, accounts)
     @from       = Bolt::Config.email_from
-    @recipients = user.name_with_email
-    @subject    = "Password Reset Code for #{Bolt::Config.application_name}"
-    @body       = {:user => user, :identity => identity, :url => url}
+    @recipients = email
+    @subject    = "Reset your password for #{Bolt::Config.application_name}"
+    @body       = {:accounts => accounts}
   end
-  
+    
 end
 ################################################################################

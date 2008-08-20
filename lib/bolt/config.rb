@@ -49,6 +49,22 @@ module Bolt
     # The class of your ActiveRecord model used to hold information about users.
     cattr_accessor(:user_model)
     @@user_model = :user
+
+    ################################################################################
+    # The attribute of your ActiveRecord model to call to get the user's email address
+    # in the case that the user_name of the backend class is not an e-mail addrees
+    # this is what is used by the forgot password code for finding an identity by e-mail 
+    cattr_accessor(:user_model_email_attribute)
+    @@user_model_email_attribute = nil
+
+    ################################################################################
+    # After the user types in an e-mail in the forgot password page the system
+    # either redirects to the reset password form (default) or simply renders the
+    # template specified by this attribute. 
+    # A sample template reset_email_sent.rhtml is defined so you can change the
+    # value to the string below to try it out
+    cattr_accessor(:render_template_after_password_reset_email)
+    @@render_template_after_password_reset_email = true # 'passwords/reset_email_sent'
     
     ################################################################################
     # The default URL to send someone after they have successfully logged in.

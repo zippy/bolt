@@ -1,0 +1,26 @@
+<% @page_title = 'Reset Your Passowrd' %>
+
+Please enter the e-mail address associated with your account and the system will send you an email with a reset code.
+<% form_tag(forgot_passwords_url) do -%>
+  <fieldset>
+    <legend>Password Reset</legend>
+
+    <% unless @email_error.blank? -%>
+      <div class="formError">
+        <p><% case @email_error
+	 				    when :bad_email_format %>
+						Please enter a valid e-mail address
+					 <% when :no_identity_for_email %>
+						We have no account associated with that e-mail address
+					 <% end %>
+				</p>
+      </div>
+    <% end -%>
+    
+    <p>
+      <label for="id">Your E-mail address</label>
+      <%= text_field_tag(:email,params[:email]) %>
+    </p>
+    <%= submit_tag('Request Reset Password E-mail') %>
+  </fieldset>
+<% end -%>

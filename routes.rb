@@ -11,3 +11,4 @@ resources(:activations,
 resources(:passwords, 
           :collection => {:forgot    => :any, :resetcode => :get},
           :member     => {:resetcode => :get})
+update_passwords('/passwords', :controller => 'passwords', :action => 'update', :conditions => { :method => :put })
