@@ -69,6 +69,7 @@ class ActivationsController < ApplicationController
   # a password and password confirmation if the user has not yet set
   # his password.
   def show
+    @user_name = params[:user_name]
     prepare_instance_variables
   end
   
@@ -98,12 +99,12 @@ class ActivationsController < ApplicationController
       account = @backend.find_by_user_name(params[:login])
       
       if account.nil?
-        @deliver_error = "Account not found."
+        @deliver_error = :account_not_found
       elsif !account.require_activation?
-        @deliver_error = "Account already activated."
+        @deliver_error = :account_already_activated
       else
         user = account.user_model_object
-        url  = activation_url(account.activation_code)
+        url  = activation_url(account.activation_code, :user_name => account.user_name)
         BoltNotifications.deliver_activation_notice(user, account, url)
         redirect_to(:action => 'new', :login => params[:login])
       end

@@ -4,9 +4,15 @@
   <fieldset>
     <legend>Recover Activation Code</legend>
 
-    <% unless @delivery_error.blank? -%>
+    <% unless @deliver_error.blank? -%>
       <div class="formError">
-        <p><%= h(@delivery_error) %></p>
+        <p><% case @deliver_error
+	 				    when :account_not_found %>
+						Account not found.
+					 <% when :account_already_activated %>
+						Account already activated.
+					 <% end %>
+				</p>
         <p>If you have already activated your account, you can <%= link_to('log in', login_path) %>.</p>
       </div>
     <% end -%>

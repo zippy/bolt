@@ -2,7 +2,7 @@
 
 <% form_tag({:controller => 'activations', :action => 'update'}, {:method => 'put'}) do -%>
   <fieldset>
-    <legend>Account Activation</legend>
+    <legend>Account Activation<% if @user_name %> for <%= @user_name %><% end %></legend>
 
     <% unless @activation_error.blank? -%>
       <div class="formError">
@@ -17,10 +17,15 @@
       <%= text_field_tag(:id, params[:id]) %>
     </p>
     
+		<% if @user_name %>
+	  	<%= hidden_field_tag(:login,@user_name) %>
+	  	<%= hidden_field_tag(:user_name,@user_name) %>
+		<% else %>
     <p>
       <label for="login"><%= h(Bolt::Config.user_name_label) %>:</label>
       <%= text_field_tag(:login, params[:login]) %>
     </p>
+		<% end %>
     
     <% if @requires_password %>
       <p>

@@ -182,9 +182,12 @@ class Identity < ActiveRecord::Base
   # Users will then be prompted for a password when activating their
   # account.
   #
-  # If you want to send out an activation notice email, pass the URL
-  # to the activations controller.  You can use the route helper (if
-  # inside a controller or view):
+  # If you want to send out an activation notice email, either pass in the
+  # activation url in the parameter, or add a block which takes a
+  # the  activation_code as a parameter to build the url.
+  # You can use the route helper (if inside a controller or view) 
+  # like this:
+  # require_activation! {|activation_code| activation_url(activation_code)}
   #
   #  activation_url(code)
   def require_activation! (activation_url=nil)
@@ -192,8 +195,9 @@ class Identity < ActiveRecord::Base
     self.activation_code = Digest::MD5.hexdigest(self.object_id.to_s + Bolt::Encode.mksalt)
     self.activation_code = self.class.standardize_code(self.activation_code)
     
-    if activation_url
-      # send out an email if so requested
+    # send out an email if so requested
+    if activation_url || block_given?
+      activation_url = yield(self.activation_code) if block_given?
       BoltNotifications.deliver_activation_notice(user_model_object, self, activation_url)
     end
     
