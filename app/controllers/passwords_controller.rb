@@ -107,7 +107,7 @@ class PasswordsController < ApplicationController
             i.reset_code! if i.reset_code.blank? # keep old reset code
             {:identity => i, :url =>resetcode_password_url(i.reset_code, :host => request.host_with_port, :user_name => i.user_name)}
           end
-          @email_text = BoltNotifications.create_password_reset_notice(@email,accounts)
+          @email_text = BoltNotifications.deliver_password_reset_notice(@email,accounts)
           if tmpl = Bolt::Config.render_template_after_password_reset_email
             render(:template => tmpl)
           else
