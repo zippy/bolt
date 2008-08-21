@@ -106,12 +106,13 @@ module Bolt
         :password     => :pill,
         :confirmation => :pill,
         :activation   => false,
+        :enabled      => true
       }.update(options)
 
       # create the back-end identity account
       backend = Bolt::Config.backend_class
       user_name = send(config[:user_name]) if config[:user_name]
-      identity = backend.new(:user_name  => user_name, :openid_url => config[:openid_url])
+      identity = backend.new(:user_name  => user_name, :openid_url => config[:openid_url],:enabled => config[:enabled])
 
       # check to see if we need to set the password for this identity
       if config[:password] != :pill and config[:confirmation] != :pill
