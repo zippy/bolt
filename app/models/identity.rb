@@ -44,7 +44,7 @@ class Identity < ActiveRecord::Base
     end
 
     account = self.find(:first, :conditions => {:user_name => clean_username(user_name)})
-    return account if account and account.password?(plain_text_password)
+    return account if account and account.enabled? and account.password?(plain_text_password)
     nil # return nil when authentication fails
   end
 
