@@ -234,7 +234,7 @@ class Identity < ActiveRecord::Base
       record.errors.add_to_base("Current password is incorrect")
     elsif record.instance_variable_get(:@password_match) == false
       record.errors.add_to_base("Password and password confirmation don't match")
-    elsif record.password_hash.blank? and (record.activation_code.blank? || record.enabled?)
+    elsif record.password_hash.blank? and record.activation_code.blank? and record.enabled?
       record.errors.add_to_base("Password can't be blank")
     end
   end
