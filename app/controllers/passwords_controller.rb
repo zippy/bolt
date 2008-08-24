@@ -74,6 +74,7 @@ class PasswordsController < ApplicationController
     end
 
     if password_changed and @identity.save
+      flash[:notice] = Bolt::Config.password_change_notice if Bolt::Config.password_change_notice
       redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
       session[:bolt_after_login] = nil
     else

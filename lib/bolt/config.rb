@@ -156,6 +156,11 @@ module Bolt
     @@session_expiration_time = nil
     
     ################################################################################
+    # Flash notice after password change
+    cattr_accessor(:password_change_notice)
+    @@password_change_notice = nil    
+    
+    ################################################################################
     # Returns the class of the user model.  You configure the user
     # model using Bolt::Config.user_model, not this method.
     def self.user_model_class
