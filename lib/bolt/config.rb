@@ -154,6 +154,11 @@ module Bolt
     # Specify a time after which the current login session should expire
     cattr_accessor(:session_expiration_time)
     @@session_expiration_time = nil
+
+    ################################################################################
+    # Flash notice after session expiration
+    cattr_accessor(:session_expiration_notice)
+    @@session_expiration_notice = nil
     
     ################################################################################
     # Flash notice after password change

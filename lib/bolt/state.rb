@@ -31,7 +31,6 @@ module Bolt
     # Returns true if the user has authenticated and logged in, false
     # otherwise.
     def logged_in?
-      !session[:user_id].nil?
       if !session[:user_id].nil? 
         expiration = Bolt::Config.session_expiration_time
         last_action_key = Bolt::Config.store_last_action_time_in_session
@@ -43,6 +42,9 @@ module Bolt
             true
           else
             self.current_user= nil
+            session[:bolt_after_login] = request.request_uri if Bolt::Config.record_url
+            flash[:notice] = Bolt::Config.session_expiration_notice if Bolt::Config.session_expiration_notice
+            nil
           end
         end
       end
