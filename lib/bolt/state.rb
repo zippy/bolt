@@ -36,9 +36,15 @@ module Bolt
         expiration = Bolt::Config.session_expiration_time
         last_action_key = Bolt::Config.store_last_action_time_in_session
         the_time_num = last_action_key ? session[last_action_key] : (session.model.updated_at.to_i ||= 0)
-        if !expiration || (Time.now.to_i - the_time_num < expiration)
+        if !expiration
           true
-        end	
+        else
+          if Time.now.to_i - the_time_num < expiration
+            true
+          else
+            self.current_user= nil
+          end
+        end
       end
     end
 
