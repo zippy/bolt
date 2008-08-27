@@ -44,13 +44,50 @@ module Bolt
       def login (user)
         last_action_key = Bolt::Config.store_last_action_time_in_session
         session[last_action_key] = Time.now.to_i if last_action_key
+
         self.current_user = user
+
+        # update the session last action time so that if we happen to be logging in after session
+        # expiration the ensuing authentication check won't just re-expire
+        session.model.save unless Bolt::Config.store_last_action_time_in_session
+
         if user.respond_to?(:login_action)
           user.login_action(request)
         end
-        redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
-        session[:bolt_after_login] = nil
+        redirect_after_login
+
         true
+      end
+
+      def redirect_after_login
+        # if this redirect was because of an expiration make sure that the newly logged in user
+        # is the same user that expired
+        if session[:bolt_expired_user] && self.current_user.id != session[:bolt_expired_user]
+          session[:bolt_after_login] = nil
+          session[:bolt_after_login_post_params] = nil
+        end
+        return_params = session[:bolt_after_login_post_params]
+        if return_params
+          session[:bolt_after_login_post_params] = nil
+          redirect_post(return_params)
+        else
+          redirect_to(session[:bolt_after_login] || Bolt::Config.after_login_url)
+        end
+        session[:bolt_after_login] = nil
+      end
+
+      def redirect_post(redirect_post_params)
+        controller_name = redirect_post_params[:controller]
+        controller = "#{controller_name.camelize}Controller".constantize
+        # Throw out existing params and merge the stored ones
+        request.parameters.reject! { true }
+        request.parameters.merge!(redirect_post_params)
+        controller.process(request, response)
+        if response.redirected_to
+          @performed_redirect = true
+        else
+          @performed_render = true
+        end
       end
     end
     

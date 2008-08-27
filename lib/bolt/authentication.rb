@@ -73,16 +73,47 @@ module Bolt
       # within a before_filter (the one created when you call
       # require_authentication).
       def authenticate
-        user = self.current_user if self.logged_in?
+        user = self.current_user if self.logged_in? && !expired!
         user ||= Bolt::HttpBasic.authenticate(self) if Bolt::Config.use_http_basic
 
         if !user or (user.respond_to?(:enabled?) and !user.enabled?)
-          session[:bolt_after_login] = request.request_uri if Bolt::Config.record_url 
-          redirect_to(login_url)
+          store_and_redirect(login_url)
           return false # stop the filter chain if called from a filter
         end
 
         user
+      end
+
+      def expired!
+        # never expire if we aren't configured with an expiration time..
+        return false if !(expiration = Bolt::Config.session_expiration_time)
+
+        last_action_key = Bolt::Config.store_last_action_time_in_session
+        the_time_num = last_action_key ? session[last_action_key] : (session.model.updated_at.to_i ||= 0)
+
+        # return false still in the time window
+        return false if Time.now.to_i - the_time_num < expiration
+
+        # clear the current session and return true setting things up to be able to
+        # redirect after a successfull login
+        expired_user = session[:user_id]
+        self.current_user= nil
+        session[:bolt_expired_user] = expired_user
+        flash[:notice] = Bolt::Config.session_expiration_notice if Bolt::Config.session_expiration_notice
+        true
+      end
+
+      def store_and_redirect(url)
+        if Bolt::Config.record_url
+          if request.method != :get
+            if params[:authenticity_token]
+              params[:authenticity_token] = form_authenticity_token
+            end
+            session[:bolt_after_login_post_params] = params
+          end
+          session[:bolt_after_login] = request.request_uri
+        end
+        redirect_to url
       end
     end
     
