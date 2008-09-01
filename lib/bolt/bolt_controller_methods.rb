@@ -102,6 +102,7 @@ module Bolt
       ################################################################################
       # Use the Rails 2.0 CSRF attack prevention code if available
       def csrf_attack_prevention (options={})
+        return
         if respond_to?(:protect_from_forgery)
           secret   = request_forgery_protection_options[:secret]
           secret ||= generate_secret
