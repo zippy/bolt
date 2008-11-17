@@ -32,7 +32,7 @@ module Bolt
     # application based on the settings.  If you give this method a
     # block, it will be yielded the Bolt::Config class for you to use:
     #
-    #  Bolt::Initializer do |bolt|
+    #  Bolt::Initializer.run do |bolt|
     #    bolt.application_name = 'My Fancy Rails App'
     #  end
     def self.run (&block)
