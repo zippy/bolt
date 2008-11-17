@@ -5,7 +5,7 @@
   - [ ] Document the ActivationsController class
   - [ ] Write some Muse documentation
 * Passwords Controller
-  - [ ] Allow logged in users to change their password
+  - [X] Allow logged in users to change their password
   - [ ] Request a password reset code, email to user
   - [ ] Accept password reset code, and set password
 * Identities Controller
@@ -15,3 +15,8 @@
   - [ ] Destroy user accounts
 * Permissions Controller
   - [ ] Allow admin users to manage Roles/Permissions/Allowances
+* Controller Mutations
+  - [ ] Remove forced forgery protection code
+* Configuration
+  - [ ] Change user_name method to a global option, instead of just in
+    the create_bolt_identity method

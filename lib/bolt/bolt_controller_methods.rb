@@ -52,19 +52,13 @@ module Bolt
     ################################################################################
     module ClassMethods
       ################################################################################
-      # Generate a secret key used for CSRF attack prevention
-      def generate_secret
-        Bolt::Config.forgery_secret || "#{Bolt::Encode.mksalt}#{Time.now.to_i}"
-      end
-      
-      ################################################################################
-      # Use the Rails 2.0 CSRF attack prevention code if available
+      # Use the Rails 2.0 CSRF attack prevention code if available.
+      # FIXME, this code is probably too far reaching.
       def csrf_attack_prevention (options={})
-        if respond_to?(:protect_from_forgery)
-          secret   = request_forgery_protection_options[:secret]
-          secret ||= generate_secret
-          protect_from_forgery(options.merge(:secret => secret))
-        end
+#         if respond_to?(:protect_from_forgery)
+#           secret = request_forgery_protection_options[:secret]
+#           protect_from_forgery(options.merge(:secret => secret))
+#         end
       end
     end
     
