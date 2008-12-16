@@ -1,6 +1,6 @@
 <% @page_title = 'Account Activation' %>
 
-<% form_tag({:controller => 'activations', :action => 'update'}, {:method => 'put'}) do -%>
+<% form_tag(activation_path('0'), {:method => 'put'}) do -%>
   <fieldset>
     <legend>Account Activation</legend>
 
@@ -14,7 +14,7 @@
     
     <p>
       <label for="id">Activation Code:</label>
-      <%= text_field_tag(:id, params[:id]) %>
+      <%= text_field_tag(:code, params[:code]) %>
     </p>
     
     <p>
@@ -34,6 +34,8 @@
       </p>
     <% end %>
 
-    <%= submit_tag('Activate') %>
+    <div class="buttons">
+      <%= submit_tag('Activate') %>
+    </div>
   </fieldset>
 <% end -%>
