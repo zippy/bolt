@@ -77,9 +77,9 @@ module Bolt
         user ||= Bolt::HttpBasic.authenticate(self) if Bolt::Config.use_http_basic
 
         if !user or (user.respond_to?(:enabled?) and !user.enabled?)
-          session[:bolt_after_login] = request.request_uri if Bolt::Config.record_url 
+          session[:bolt_after_login] = request.request_uri if Bolt::Config.record_url
           redirect_to(login_url)
-          return false # stop the filter chain if called from a filter
+          return false
         end
 
         user
