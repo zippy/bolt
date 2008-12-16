@@ -1,6 +1,6 @@
 <% @page_title = 'Account Activation' %>
 
-<% form_tag(activation_path('0'), {:method => 'put'}) do -%>
+<% form_tag(activation_path('0'), :id => 'activation-form', :method => 'put') do -%>
   <fieldset>
     <legend>Account Activation</legend>
 
@@ -39,3 +39,5 @@
     </div>
   </fieldset>
 <% end -%>
+
+<%= javascript_tag('Form.focusFirstElement("activation-form");') %>

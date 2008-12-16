@@ -1,0 +1,49 @@
+<% @page_title = 'Password Reset' %>
+
+<% form_tag(password_path(0), :id => 'reset-form', :method => 'put') do -%>
+  <fieldset>
+    <legend>Reset Password</legend>
+
+    <% unless @reset_error.blank? -%>
+      <div class="formError">
+        <p><%= h(@reset_error) %></p>
+        
+        <p>
+          Please check your reset code, and 
+          <%= h(Bolt::Config.user_name_label.downcase) %>, they try again.
+        </p>
+        
+        <p>
+          If you're still having problems, you can
+          <%= link_to('request a new reset code', forgot_passwords_path) %>.
+        </p>
+      </div>
+    <% end -%>
+    
+    <p>
+      <label for="id">Reset Code:</label>
+      <%= text_field_tag(:code, params[:code]) %>
+    </p>
+    
+    <p>
+      <label for="login"><%= h(Bolt::Config.user_name_label) %>:</label>
+      <%= text_field_tag(:login, params[:login]) %>
+    </p>
+    
+    <p>
+      <label for="password">Choose a Password:</label>
+      <%= password_field_tag(:password) %>
+    </p>
+    
+    <p>
+      <label for="confirmation">Password Confirmation:</label>
+      <%= password_field_tag(:confirmation) %>
+    </p>
+
+    <div class="buttons">
+      <%= submit_tag('Reset Password') %>
+    </div>
+  </fieldset>
+<% end -%>
+
+<%= javascript_tag('Form.focusFirstElement("reset-form");') %>

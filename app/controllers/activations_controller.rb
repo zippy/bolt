@@ -26,7 +26,7 @@ class ActivationsController < ApplicationController
 
   ################################################################################
   # Don't put passwords in the log file
-  filter_parameter_logging(:pass)
+  filter_parameter_logging(:password, :confirmation)
 
   ################################################################################
   # Skip the Bolt authenticate filter (if it's in use)
@@ -66,6 +66,7 @@ class ActivationsController < ApplicationController
   # a password and password confirmation if the user has not yet set
   # his password.
   def show
+    params[:code] = params[:id] if params[:id] != '0'
   end
   
   ################################################################################
@@ -93,9 +94,9 @@ class ActivationsController < ApplicationController
       account = @backend.find_by_user_name(@login)
       
       if account.nil?
-        @deliver_error = "Account not found."
+        @delivery_error = "Account not found."
       elsif !account.require_activation?
-        @deliver_error = "Account already activated."
+        @delivery_error = "Account already activated."
       else
         user = account.user_model_object
         url  = activation_url(account.activation_code)

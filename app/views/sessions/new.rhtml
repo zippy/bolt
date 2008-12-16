@@ -1,6 +1,6 @@
 <% @page_title = 'Login' %>
 
-<% form_tag(sessions_path) do -%>
+<% form_tag(sessions_path, :id => 'login-form') do -%>
   <fieldset>
     <legend>Login</legend>
 
@@ -18,6 +18,11 @@
       <%= password_field_tag(:password) %>
     </p>
 
-    <%= submit_tag('OK') %>
+    <div class="buttons">
+      <%= button_to_function('Need Password') {|p| p.redirect_to(passwords_path)} %>
+      <%= submit_tag('OK') %>
+    </div>
   </fieldset>
 <% end -%>
+
+<%= javascript_tag('Form.focusFirstElement("login-form");') %>
