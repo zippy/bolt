@@ -1,7 +1,3 @@
-#title Installing Bolt
-#author Peter Jones
-#date nil
-
 * Installing Bolt
 
 Bolt requires the [[http://railsengines.org/][Rails Engines]] plug-in to be installed correctly.

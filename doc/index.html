@@ -30,6 +30,29 @@
 </dt>
 </dl>
 </dd>
+<dt>
+<a href="#sec7">Using Bolt</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec8">Building the Bolt API Documentation</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec9">Bolt Testing Helpers</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec10">Loading the Helper File</a>
+</dt>
+<dt>
+<a href="#sec11">Simulating a Logged In User</a>
+</dt>
+</dl>
+</dd>
 </dl>
 </div>
 
@@ -119,6 +142,69 @@ the settings appropriately.</p>
 <p>For a complete list of configuration options, please consult the API
 documentation for the <code>Bolt::Config</code> class, or review the <code>config.rb</code> file
 in the Bolt <code>lib</code> directory.</p>
+
+
+
+
+<h2><a name="sec7" id="sec7"></a>
+Using Bolt</h2>
+
+<p class="first">Bolt comes with extensive API documentation.  To get started with
+Bolt, build the API documentation and allow it to guide you to the
+necessary classes.</p>
+
+<h3><a name="sec8" id="sec8"></a>
+Building the Bolt API Documentation</h3>
+
+<p class="first">A script is provided to help you build the API documentation.  From
+within the <code>vendor/plugins/bolt</code> directory:</p>
+
+<pre class="example">
+$ sh script/rdoc.sh
+</pre>
+
+<p>You can then open the <code>doc/rdoc/index.html</code> file.</p>
+
+
+
+
+<h2><a name="sec9" id="sec9"></a>
+Bolt Testing Helpers</h2>
+
+<p class="first">Bolt includes a helper file so that you can simulate a current user,
+thus allowing you to test controllers that require authentication or
+authorization.</p>
+
+<h3><a name="sec10" id="sec10"></a>
+Loading the Helper File</h3>
+
+<p class="first">In your functional test file, require the <code>bolt/mocking</code> file:</p>
+
+<pre class="src">
+require <span style="color: #A5F26E;">'bolt/mocking'</span>
+</pre>
+
+
+<h3><a name="sec11" id="sec11"></a>
+Simulating a Logged In User</h3>
+
+<p class="first">In one of your test methods (usually in your <code>setup</code> method) set the
+current user:</p>
+
+<pre class="src">
+<span style="color: #CC7832; font-weight: bold;">def</span> <span style="color: #E8BF6A; font-weight: bold;">setup</span>
+  <span style="color: #D0D0F3;">@controller</span> = <span style="color: #8888ff; font-weight: bold;">MyController</span>.new
+  <span style="color: #D0D0F3;">@controller</span>.current_user = users(<span style="color: #6BCFF7;">:sjobs</span>)
+  <span style="color: #D0D0F3;">@request</span>    = <span style="color: #8888ff; font-weight: bold;">ActionController</span>::<span style="color: #8888ff; font-weight: bold;">TestRequest</span>.new
+  <span style="color: #D0D0F3;">@response</span>   = <span style="color: #8888ff; font-weight: bold;">ActionController</span>::<span style="color: #8888ff; font-weight: bold;">TestResponse</span>.new
+<span style="color: #CC7832; font-weight: bold;">end</span>
+</pre>
+
+<p>To force a log-out set the current user to <code>nil</code>:</p>
+
+<pre class="src">
+<span style="color: #D0D0F3;">@controller</span>.current_user = <span style="color: #D0D0F3;">nil</span>
+</pre>
 
 
 

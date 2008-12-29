@@ -12,20 +12,30 @@ such as LDAP.
 
 == Status
 
-As of January 25, 2008:
+As of December 29, 2008:
 
 Bolt is currently being used in production.  It has a health set of
-unit and functional tests that are all passing.
-
-It is, however, missing a few view files for the password changing
-controller, and such controllers need to be documented.
-
-As soon as those items are done, I'll release 1.0.
+unit and functional tests that are all passing for Rails 1.2.6.  I'm
+currently working on some small changes to get all tests for Rails
+2.2.2 passing.
 
 
-== Installation
+== Creating Users
 
-See the +doc/install.muse+ file.
+Bolt uses a table called identities that might look very similar to
+your users table.  The duplication is necessary to support different
+authentication sources.  It also means that when you create a new user
+record, you must also create a new Bolt identity record.
+
+This is done using the +create_bolt_identity+ method on your user
+object.  Documentation for method can be found in Bolt::UserModelExt.
+
+Also see the script/createuser script for an example of how to
+create a user and identity.
+
+In a future version of Bolt, identity creation will be automatic and
+you won't need to call +create_bolt_identity+.
+
 
 == Authentication
 

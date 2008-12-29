@@ -1,12 +1,10 @@
-#title Bolt Testing Helpers
-#author Peter Jones
-#date nil
+* Bolt Testing Helpers
 
 Bolt includes a helper file so that you can simulate a current user,
 thus allowing you to test controllers that require authentication or
 authorization.
 
-* Loading the Helper File
+** Loading the Helper File
 
 In your functional test file, require the =bolt/mocking= file:
 
@@ -14,7 +12,7 @@ In your functional test file, require the =bolt/mocking= file:
 require 'bolt/mocking'
 </src>
 
-* Simulating a Logged In User
+** Simulating a Logged In User
 
 In one of your test methods (usually in your =setup= method) set the
 current user:

@@ -16,3 +16,5 @@ authentication, making it easy to authenticate with an external source
 such as LDAP.
 
 <include file="install.muse"/>
+<include file="using.muse"/>
+<include file="testing.muse"/>
