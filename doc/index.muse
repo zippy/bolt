@@ -1,5 +1,10 @@
 #title Bolt
 #author Peter Jones
+#date nil
+
+<contents/>
+
+* Introduction
 
 Bolt is yet another authentication/authorization plugin for Ruby on
 Rails, implemented as a Rails Engine.  It is a full service plugin,
@@ -10,6 +15,4 @@ There is also support for working with any loaded class for
 authentication, making it easy to authenticate with an external source
 such as LDAP.
 
-* Documentation
-
- - [[install]]
+<include file="install.muse"/>

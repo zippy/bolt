@@ -1,0 +1,129 @@
+<html>
+       <head><title>Bolt</title>
+       <link href="http://pmade.com/static/stylesheets/print.css" media="all" rel="stylesheet" type="text/css"/></head>
+       <body><!-- Published with Emacs Muse and BareCMS -->
+<div class="heading">
+  <h1 class="title">Bolt</h1>
+  <div class="attribution"><span class="author">by Peter Jones</span><br class="clear"/></div>
+</div>
+<div class="contents">
+<dl>
+<dt>
+<a href="#sec1">Introduction</a>
+</dt>
+<dt>
+<a href="#sec2">Installing Bolt</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec3">Step 1. Migrating the Database Schema</a>
+</dt>
+<dt>
+<a href="#sec4">Step 2. Add a Column to Your User Model</a>
+</dt>
+<dt>
+<a href="#sec5">Step 3. Configure URL Routing</a>
+</dt>
+<dt>
+<a href="#sec6">Step 4. Configure Bolt</a>
+</dt>
+</dl>
+</dd>
+</dl>
+</div>
+
+
+<h2><a name="sec1" id="sec1"></a>
+Introduction</h2>
+
+<p class="first">Bolt is yet another authentication/authorization plugin for Ruby on
+Rails, implemented as a Rails Engine.  It is a full service plugin,
+providing models, controllers, and views.</p>
+
+<p>Authentication and Authorization are both provided by the plugin.
+There is also support for working with any loaded class for
+authentication, making it easy to authenticate with an external source
+such as LDAP.</p>
+
+<h2><a name="sec2" id="sec2"></a>
+Installing Bolt</h2>
+
+<p class="first">Bolt requires the <a href="http://railsengines.org/">Rails Engines</a> plug-in to be installed correctly.
+Installing Rails Engines plug-in is pretty straight forward:</p>
+
+<ol>
+<li>Download and install engines using <a href="http://railsengines.org/download">these instructions</a></li>
+<li>Edit your <code>config/environment.rb</code> according to the Rails Engines
+<code>README</code> file</li>
+</ol>
+
+<p>Once you have Rails Engines installed, place Bolt into your
+<code>vendor/plugins</code> directory as you would any other plugin.  Then follow
+the remaining installation steps.</p>
+
+<h3><a name="sec3" id="sec3"></a>
+Step 1. Migrating the Database Schema</h3>
+
+<p class="first">Create the necessary migration file, and migrate your database schema:</p>
+
+<pre class="example">
+$ script/generate plugin_migration
+$ rake db:migrate
+</pre>
+
+
+<h3><a name="sec4" id="sec4"></a>
+Step 2. Add a Column to Your User Model</h3>
+
+<p class="first">Bolt does not place any restrictions on which model you consider your
+&quot;user&quot; model.  However, in all the documentation for Bolt, it is
+usually referred to as the <code>User</code> model.</p>
+
+<p>Alter your <code>User</code> model in a migration like so:</p>
+
+<pre class="src">
+add_column(<span style="color: #6BCFF7;">:users</span>, <span style="color: #6BCFF7;">:bolt_identity_id</span>, <span style="color: #6BCFF7;">:integer</span>)
+add_index(<span style="color: #6BCFF7;">:users</span>,  <span style="color: #6BCFF7;">:bolt_identity_id</span>, <span style="color: #6BCFF7;">:unique</span> =&gt; <span style="color: #D0D0F3;">true</span>)
+</pre>
+
+
+<h3><a name="sec5" id="sec5"></a>
+Step 3. Configure URL Routing</h3>
+
+<p class="first">Since Bolt has controllers, you need to tell your application about
+Bolt's routes.</p>
+
+<p>Add the following line to your <code>config/routes.rb</code> file (usually near the
+bottom, before any catch-all routes):</p>
+
+<pre class="src">
+map.from_plugin(<span style="color: #6BCFF7;">:bolt</span>)
+</pre>
+
+
+<h3><a name="sec6" id="sec6"></a>
+Step 4. Configure Bolt</h3>
+
+<p class="first">Bolt has several configuration options that can be customized.  To
+start with a basic configuration, run the following command:</p>
+
+<pre class="example">
+$ script/generate bolt
+</pre>
+
+<p>That command will create a new file called
+<code>config/initializers/bolt.rb</code>.  You'll want to edit that file and change
+the settings appropriately.</p>
+
+<p>For a complete list of configuration options, please consult the API
+documentation for the <code>Bolt::Config</code> class, or review the <code>config.rb</code> file
+in the Bolt <code>lib</code> directory.</p>
+
+
+
+
+
+<!-- Page published by Emacs Muse ends here -->
+  </body>
+</html>

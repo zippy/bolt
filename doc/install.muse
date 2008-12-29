@@ -1,14 +1,21 @@
 #title Installing Bolt
 #author Peter Jones
+#date nil
 
-Rails Engines needs to be installed into your Rails application.  You
-can find out more about Rails Engines [[http://rails-engines.org/][here]].
+* Installing Bolt
+
+Bolt requires the [[http://railsengines.org/][Rails Engines]] plug-in to be installed correctly.
+Installing Rails Engines plug-in is pretty straight forward:
+
+ 1. Download and install engines using [[http://railsengines.org/download][these instructions]]
+ 2. Edit your =config/environment.rb= according to the Rails Engines
+    =README= file
 
 Once you have Rails Engines installed, place Bolt into your
 =vendor/plugins= directory as you would any other plugin.  Then follow
-these steps.
+the remaining installation steps.
 
-* Step 1. Migrating the Database Schema
+** Step 1. Migrating the Database Schema
 
 Create the necessary migration file, and migrate your database schema:
 
@@ -17,7 +24,7 @@ $ script/generate plugin_migration
 $ rake db:migrate
 </example>
 
-* Step 2. Add a Column to Your User Model
+** Step 2. Add a Column to Your User Model
 
 Bolt does not place any restrictions on which model you consider your
 "user" model.  However, in all the documentation for Bolt, it is
@@ -27,31 +34,33 @@ Alter your =User= model in a migration like so:
 
 <src lang="ruby">
 add_column(:users, :bolt_identity_id, :integer)
-add_index(:users, :bolt_identity_id, :unique => true)
+add_index(:users,  :bolt_identity_id, :unique => true)
 </src>
 
-* Step 3. Configure URL Routing
+** Step 3. Configure URL Routing
 
-In your =config/routes.rb= file:
+Since Bolt has controllers, you need to tell your application about
+Bolt's routes.
+
+Add the following line to your =config/routes.rb= file (usually near the
+bottom, before any catch-all routes):
 
 <src lang="ruby">
 map.from_plugin(:bolt)
 </src>
 
-* Step 4. Configure Bolt
+** Step 4. Configure Bolt
 
-Place a Bolt configuration block into the correct file.  For Rails
-1.2.X, use the =config/environment.rb= file (near the end).  For Rails
-2.X, create a =config/initializers/bolt.rb= file.
+Bolt has several configuration options that can be customized.  To
+start with a basic configuration, run the following command:
 
-Here is an example configuration block for Bolt:
+<example>
+$ script/generate bolt
+</example>
 
-<src lang="ruby">
-Bolt::Initializer.run do |bolt|
-  bolt.application_name = 'My Fancy Rails Application'
-  bolt.email_from = 'Account Team <me@example.com>'
-end
-</src>
+That command will create a new file called
+=config/initializers/bolt.rb=.  You'll want to edit that file and change
+the settings appropriately.
 
 For a complete list of configuration options, please consult the API
 documentation for the =Bolt::Config= class, or review the =config.rb= file
