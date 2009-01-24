@@ -1,0 +1,16 @@
+* Using Bolt
+
+Bolt comes with extensive API documentation.  To get started with
+Bolt, build the API documentation and allow it to guide you to the
+necessary classes.
+
+** Building the Bolt API Documentation
+
+A script is provided to help you build the API documentation.  From
+within the =vendor/plugins/bolt= directory:
+
+<example>
+$ sh script/rdoc.sh
+</example>
+
+You can then open the =doc/rdoc/index.html= file.

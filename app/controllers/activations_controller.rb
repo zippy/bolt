@@ -25,16 +25,16 @@
 class ActivationsController < ApplicationController
 
   ################################################################################
+  # Don't put passwords in the log file
+  filter_parameter_logging(:password, :confirmation)
+
+  ################################################################################
   # Skip the Bolt authenticate filter (if it's in use)
   skip_before_filter(:authenticate)
 
   ################################################################################
-  # Don't put passwords in the log file
-  filter_parameter_logging(:pass)
-
-  ################################################################################
-  # Prepare the backend authentication class
   before_filter(:prepare_backend)
+  before_filter(:prepare_instance_variables)
   
   ################################################################################
   # Nothing to see here, go to new.
@@ -52,10 +52,7 @@ class ActivationsController < ApplicationController
   # Confirm the activation code, and send to the show page if a
   # password needs to be set.
   def create
-    prepare_instance_variables
-    
     unless @requires_password
-      # try to activate the account identified by the given code and login
       account = @backend.activate!(@login, @code)
       login(account.user_model_object) and return if account and account.valid?
     end
@@ -70,6 +67,7 @@ class ActivationsController < ApplicationController
   # his password.
   def show
     @user_name = params[:user_name]
+    params[:code] = params[:id] if params[:id] != '0'
     prepare_instance_variables
   end
   
@@ -77,7 +75,6 @@ class ActivationsController < ApplicationController
   # Attempt to active the identity with the given activation code.
   # Setting their password if necessary.
   def update
-    prepare_instance_variables
     account = @backend.activate(@login, @code)
     
     if account
@@ -95,8 +92,8 @@ class ActivationsController < ApplicationController
   # Display a form that prompts for an email address, and then send
   # out an activation email.
   def deliver
-    unless params[:login].blank?
-      account = @backend.find_by_user_name(params[:login])
+    unless @login.blank?
+      account = @backend.find_by_user_name(@login)
       
       if account.nil?
         @deliver_error = :account_not_found
@@ -106,7 +103,7 @@ class ActivationsController < ApplicationController
         user = account.user_model_object
         url  = activation_url(account.activation_code, :user_name => account.user_name)
         BoltNotifications.deliver_activation_notice(user, account, url)
-        redirect_to(:action => 'new', :login => params[:login])
+        redirect_to(:action => 'new', :login => @login)
       end
     end
   end
@@ -118,19 +115,21 @@ class ActivationsController < ApplicationController
   include(Bolt::BoltControllerMethods)
 
   ################################################################################
-  # Rails 2.0 CSRF Security
-  csrf_attack_prevention(:only => [:create, :update])
-    
-  ################################################################################
   def prepare_backend
     @backend = Bolt::Config.backend_class
   end
   
   ################################################################################
   def prepare_instance_variables
-    @code  = params[:id]
-    @login = params[:login]
-    @requires_password = @backend.activation_requires_password?(@code)
+    @code   = params[:code] unless params[:code].blank?
+    @code ||= params[:id]
+    @login  = params[:login]
+    
+    @requires_password = 
+      if !@code.blank?
+        @backend.activation_requires_password?(@code)
+      elsif !@login.blank?
+        @backend.user_name_requires_password?(@login)
+      end
   end
-
 end

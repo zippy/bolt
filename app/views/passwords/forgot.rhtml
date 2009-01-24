@@ -1,7 +1,7 @@
 <% @page_title = 'Reset Your Passowrd' %>
 
 Please enter the e-mail address associated with your account and the system will send you an email with a reset code.
-<% form_tag(forgot_passwords_url) do -%>
+<% form_tag(forgot_passwords_url, :id => 'reset-form') do -%>
   <fieldset>
     <legend>Password Reset</legend>
 
@@ -24,3 +24,5 @@ Please enter the e-mail address associated with your account and the system will
     <%= submit_tag('Request Reset Password E-mail') %>
   </fieldset>
 <% end -%>
+
+<%= javascript_tag('Form.focusFirstElement("reset-form");') %>

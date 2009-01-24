@@ -78,7 +78,7 @@ module Bolt
 
         if !user or (user.respond_to?(:enabled?) and !user.enabled?)
           store_and_redirect(login_url)
-          return false # stop the filter chain if called from a filter
+          return false
         end
 
         user

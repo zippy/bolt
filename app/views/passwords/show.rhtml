@@ -2,7 +2,7 @@
 <%if !Bolt::Config.render_template_after_password_reset_email %>
 	Please check your e-mail to find the reset code you need to enter below.
 <% end %>
-<% form_tag(update_passwords_path, :method=>:put) do -%>
+<% form_tag(update_passwords_path, :id => 'reset-form', :method=>:put) do -%>
   <fieldset>
     <legend><% if @user_name %> Reset password for <%= @user_name %> <% else %>Reset Your Password<% end %></legend>
 
@@ -40,3 +40,5 @@
     <%= submit_tag('Reset Password') %>
   </fieldset>
 <% end -%>
+
+<%= javascript_tag('Form.focusFirstElement("reset-form");') %>

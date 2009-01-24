@@ -1,6 +1,6 @@
 <% @page_title = 'Account Activation' %>
 
-<% form_tag({:controller => 'activations', :action => 'update'}, {:method => 'put'}) do -%>
+<% form_tag(activation_path('0'), :id => 'activation-form', :method => 'put') do -%>
   <fieldset>
     <legend>Account Activation<% if @user_name %> for <%= @user_name %><% end %></legend>
 
@@ -14,7 +14,7 @@
     
     <p>
       <label for="id">Activation Code:</label>
-      <%= text_field_tag(:id, params[:id]) %>
+      <%= text_field_tag(:code, params[:code]) %>
     </p>
     
 		<% if @user_name %>
@@ -39,6 +39,10 @@
       </p>
     <% end %>
 
-    <%= submit_tag('Activate') %>
+    <div class="buttons">
+      <%= submit_tag('Activate') %>
+    </div>
   </fieldset>
 <% end -%>
+
+<%= javascript_tag('Form.focusFirstElement("activation-form");') %>

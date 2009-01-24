@@ -110,7 +110,7 @@ module Bolt
       # false if the user isn't authroized to continue.
       ################################################################################
       def authorize (*permissions)
-        return false unless user = authenticate
+        return bolt_failed_authorization unless user = authenticate
 
         configuration = {
           :or_user_matches => nil,
@@ -119,7 +119,11 @@ module Bolt
 
         configuration.update(permissions.last.is_a?(Hash) ? permissions.pop : {})
         return true if !configuration[:or_user_matches].nil? and user == configuration[:or_user_matches]
-        return configuration[:condition] unless configuration[:condition] == :pill
+        
+        if configuration[:condition] != :pill
+          return bolt_failed_authorization if !configuration[:condition]
+          return configuration[:condition]
+        end
 
         permissions.each do |name|
           if allowance = user.authorize(name) and respond_to?(:check_allowance)
@@ -136,13 +140,9 @@ module Bolt
       # Helper method called when authorization fails
       def bolt_failed_authorization #:nodoc:
         unauthorized if respond_to?(:unauthorized)
-
-        if !performed?
-          redirect_to(request.env["HTTP_REFERER"] ? :back : home_url)
-          return false
-        end
+        redirect_to(request.env["HTTP_REFERER"] ? :back : home_url) unless performed?
+        return false
       end
     end
-    
   end
 end

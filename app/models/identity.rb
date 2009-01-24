@@ -78,6 +78,13 @@ class Identity < ActiveRecord::Base
   end
   
   ################################################################################
+  # Check to see if the given username requires a password to be set
+  def self.user_name_requires_password? (user_name)
+    account = find_by_user_name(user_name)
+    account ? account.password_hash.blank? : true
+  end
+  
+  ################################################################################
   # Locate an account based on the user_name and a reset code.  If that
   # account can be found, reset the password with the given password and
   # confirmation.

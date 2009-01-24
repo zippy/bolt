@@ -25,17 +25,24 @@
 class PasswordsController < ApplicationController
 
   ################################################################################
+  PUBLIC_METHODS = [:index, :forgot, :resetcode, :show, :update]
+  
+  ################################################################################
   # Skip the Bolt authenticate filter (if it's in use)
   skip_before_filter(:authenticate)
   
   ################################################################################
   # Re-enable the Bolt authenticate filter for the actions that
   # require the user to be logged in.
-  require_authentication(:except => [:index, :forgot, :edit, :update, :resetcode])
+  require_authentication(:except => PUBLIC_METHODS)
 
   ################################################################################
   # Don't put passwords in the log file, it's just not nice
-  filter_parameter_logging(:pass)
+  filter_parameter_logging(:password, :confirmation)
+  
+  ################################################################################
+  # Rails sucks, you can't have more than one layout.
+  layout("sessions") if !layout_list.grep(/\bsessions\b/).blank?
 
   ################################################################################
   # Do the right thing based on the state of the current user
@@ -137,14 +144,20 @@ class PasswordsController < ApplicationController
   # in.  This is like the resetcode action, except the reset code was
   # given in the URL in the :id param.
   def show
+    params[:code] = params[:id] if params[:id] != '0'
   end
   
   ################################################################################
   # Reset a password for someone who is not logged in, but has a reset code
   def update
-    args = [params[:login], params[:id], params[:password], params[:confirmation]]
+    args = [params[:login], params[:code], params[:password], params[:confirmation]]
     identity = Bolt::Config.backend_class.reset_password!(*args)
-    login(identity.user_model_object) and return if identity and identity.valid?
+    
+    if identity and identity.valid?
+      login(identity.user_model_object)
+      return
+    end
+    
     @reset_error = identity.errors.full_messages.join("\n") if identity
     @reset_error ||= 'Invalid password reset code.'
     @user_name = params[:login]
@@ -153,12 +166,8 @@ class PasswordsController < ApplicationController
   
   ################################################################################
   private
-  
+
   ################################################################################
   include(Bolt::BoltControllerMethods)
 
-  ################################################################################
-  # Rails 2.0 CSRF Security
-  csrf_attack_prevention(:only => [:create])
-    
 end
