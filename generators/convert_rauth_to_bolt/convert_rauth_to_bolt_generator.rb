@@ -22,31 +22,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 ################################################################################
-module Bolt
-  
+class ConvertRauthToBoltGenerator < Rails::Generator::Base
+
   ################################################################################
-  module Initializer
-    
-    ################################################################################
-    # Configure Bolt, and then allow it to instrument your Rails
-    # application based on the settings.  If you give this method a
-    # block, it will be yielded the Bolt::Config class for you to use:
-    #
-    #  Bolt::Initializer.run do |bolt|
-    #    bolt.application_name = 'My Fancy Rails App'
-    #  end
-    def self.run (&block)
-      # Give the caller a chance to change bolt settings before we
-      # start using them.
-      yield(Bolt::Config) if block
-      require_dependency(Bolt::Config.user_model.to_s)
-      augment_user_model
+  def manifest
+    record do |m|
+      m.migration_template('convert_rauth_to_bolt.rb', 'db/migrate',
+                           :migration_file_name => 'convert_rauth_to_bolt')
     end
-
-    ################################################################################
-    def self.augment_user_model # :nodoc:
-      Bolt::Config.user_model_class.send(:include, Bolt::UserModelExt)
-    end
-
   end
 end

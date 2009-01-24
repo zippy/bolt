@@ -39,8 +39,10 @@ module Bolt
         raise "#{klass} is missing the bolt_identity_id column" unless $0.match(/\/rake$/)
       end
 
-      # Protect the bolt_identity_id column
-      klass.attr_protected(:bolt_identity_id)
+      # Protect the bolt_identity_id column if necessary
+      if klass.accessible_attributes.blank?
+        klass.attr_protected(:bolt_identity_id)
+      end
 
       # Additional validations that need to be added to the user model
       klass.validate do |record|

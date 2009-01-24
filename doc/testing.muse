@@ -1,0 +1,35 @@
+#title Bolt Testing Helpers
+#author Peter Jones
+#date nil
+
+Bolt includes a helper file so that you can simulate a current user,
+thus allowing you to test controllers that require authentication or
+authorization.
+
+* Loading the Helper File
+
+In your functional test file, require the =bolt/mocking= file:
+
+<src lang="ruby">
+require 'bolt/mocking'
+</src>
+
+* Simulating a Logged In User
+
+In one of your test methods (usually in your =setup= method) set the
+current user:
+
+<src lang="ruby">
+def setup
+  @controller = MyController.new
+  @controller.current_user = users(:sjobs)
+  @request    = ActionController::TestRequest.new
+  @response   = ActionController::TestResponse.new
+end
+</src>
+
+To force a log-out set the current user to =nil=:
+
+<src lang="ruby">
+@controller.current_user = nil
+</src>

@@ -22,31 +22,29 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 ################################################################################
-module Bolt
-  
+module Mocking
+
   ################################################################################
-  module Initializer
+  module ControllerInstanceMethods
     
     ################################################################################
-    # Configure Bolt, and then allow it to instrument your Rails
-    # application based on the settings.  If you give this method a
-    # block, it will be yielded the Bolt::Config class for you to use:
-    #
-    #  Bolt::Initializer.run do |bolt|
-    #    bolt.application_name = 'My Fancy Rails App'
-    #  end
-    def self.run (&block)
-      # Give the caller a chance to change bolt settings before we
-      # start using them.
-      yield(Bolt::Config) if block
-      require_dependency(Bolt::Config.user_model.to_s)
-      augment_user_model
+    def logged_in?
+      !@mock_login.nil?
+    end
+    
+    ################################################################################
+    def current_user
+      @mock_login || Bolt::Config.user_model_class.new
     end
 
     ################################################################################
-    def self.augment_user_model # :nodoc:
-      Bolt::Config.user_model_class.send(:include, Bolt::UserModelExt)
+    def current_user= (user)
+      @mock_login = user
     end
 
   end
 end
+
+################################################################################
+ActionController::Base.send(:include, Mocking::ControllerInstanceMethods)
+ActionView::Base.send(:include, Mocking::ControllerInstanceMethods)
