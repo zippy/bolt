@@ -115,7 +115,7 @@ class PasswordsController < ApplicationController
             if i.enabled
               raise i.inspect if !i.valid?
               i.reset_code! if i.reset_code.blank? # keep old reset code
-              {:identity => i, :url =>resetcode_password_url(i.reset_code, :host => request.host_with_port, :user_name => i.user_name)}
+              {:identity => i, :url =>password_url(i.reset_code, :host => request.host_with_port, :user_name => i.user_name)}
             end
           end
           accounts = accounts.compact
@@ -144,6 +144,7 @@ class PasswordsController < ApplicationController
   # in.  This is like the resetcode action, except the reset code was
   # given in the URL in the :id param.
   def show
+    @user_name = params[:user_name]
     params[:code] = params[:id] if params[:id] != '0'
   end
   
