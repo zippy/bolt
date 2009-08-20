@@ -161,7 +161,7 @@ module Bolt
       #  Peter Jones <pjones@pmade.com>
       def name_with_email
         result   = name if respond_to?(:name)
-        result ||= first_name + ' ' + last_name if respond_to?(:first_name) and respond_to?(:last_name)
+        result ||= '"'+first_name + ' ' + last_name+'" ' if respond_to?(:first_name) and respond_to?(:last_name)
         result ||= ''
         result << "<#{email}>" if respond_to?(:email)
         result << "<#{email_address}>" if respond_to?(:email_address)
